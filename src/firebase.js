@@ -8,7 +8,7 @@ const config = {
     authDomain: "slack-messanger.firebaseapp.com",
     databaseURL: "https://slack-messanger.firebaseio.com",
     projectId: "slack-messanger",
-    storageBucket: "",
+    storageBucket: "slack-messanger.appspot.com",
     messagingSenderId: "1006195291841"
 };
 firebase.initializeApp(config);

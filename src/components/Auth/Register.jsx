@@ -1,13 +1,196 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+
+import md5 from "md5";
+import firebase from "../../firebase";
+import {
+  Grid,
+  GridColumn,
+  Header,
+  Segment,
+  FormInput,
+  Icon,
+  Button,
+  Form,
+  Message
+} from "semantic-ui-react";
 
 export class Register extends Component {
-  render() {
+  state = {
+    username: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+    error: "",
+    loading: false
+  };
+
+  handleChange = () => event => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
+
+  isFormValid = () => {
+    if (this.isFormEmpty(this.state)) {
+      this.setState({ error: "Fill in all fields" });
+      return false;
+    } else if (!this.isPasswordValid(this.state)) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  isFormEmpty = ({ username, email, password, passwordConfirm }) => {
     return (
-      <div>
-        Register
-      </div>
-    )
+      !username.length ||
+      !email.length ||
+      !password.length ||
+      !passwordConfirm.length
+    );
+  };
+
+  isPasswordValid = ({ password, passwordConfirm }) => {
+    if (password.length < 6 || passwordConfirm.length < 6) {
+      this.setState({ error: "Password should be 6 chars length minimum" });
+      return false;
+    } else if (password !== passwordConfirm) {
+      this.setState({ error: "Passwords are not the same" });
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  handleSubmit = () => event => {
+    event.preventDefault();
+    if (this.isFormValid()) {
+      this.setState({ errors: [], loading: true });
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(this.state.email, this.state.password)
+        .then(createdUser => {
+          console.log(createdUser);
+          createdUser.user
+            .updateProfile({
+              displayName: this.state.username,
+              photoURL: `http://gravatar.com/avatar/${md5(
+                createdUser.user.email
+              )}?d=identicon`
+            })
+            .then(() => {
+              this.setState({ loading: false });
+            })
+            .catch(err => {
+              this.setState({ error: err.message, loading: false });
+            });
+        })
+        .catch(error => {
+          console.log(error);
+          this.setState({ error: error.message, loading: false });
+        });
+    }
+  };
+
+  render() {
+    const {
+      username,
+      email,
+      password,
+      passwordConfirm,
+      error,
+      loading
+    } = this.state;
+    return (
+      <Grid className="app" textAlign="center" verticalAlign="middle">
+        <GridColumn style={{ maxWidth: 450 }}>
+          <Header as="h2" icon color="orange" textAlign="center">
+            <Icon name="puzzle piece" color="orange" />
+            Register for DevChat
+          </Header>
+          <Form onSubmit={this.handleSubmit()}>
+            <Segment stacked>
+              <FormInput
+                fluid
+                name="username"
+                icon="user"
+                iconPosition="left"
+                placeholder="Username"
+                type="text"
+                value={username}
+                className={
+                  this.state.error.toLowerCase().includes("name") ? "error" : ""
+                }
+                onChange={this.handleChange()}
+              />
+              <FormInput
+                fluid
+                name="email"
+                icon="mail"
+                iconPosition="left"
+                placeholder="Email"
+                type="email"
+                value={email}
+                className={
+                  this.state.error.toLowerCase().includes("email")
+                    ? "error"
+                    : ""
+                }
+                onChange={this.handleChange()}
+              />
+              <FormInput
+                fluid
+                name="password"
+                icon="lock"
+                iconPosition="left"
+                placeholder="Password"
+                type="password"
+                value={password}
+                className={
+                  this.state.error.toLowerCase().includes("password")
+                    ? "error"
+                    : ""
+                }
+                onChange={this.handleChange()}
+              />
+              <FormInput
+                fluid
+                name="passwordConfirm"
+                icon="repeat"
+                iconPosition="left"
+                placeholder="Confirm Password"
+                type="password"
+                value={passwordConfirm}
+                className={
+                  this.state.error.toLowerCase().includes("password")
+                    ? "error"
+                    : ""
+                }
+                onChange={this.handleChange()}
+              />
+              <Button
+                disabled={loading}
+                className={loading ? "loading" : ""}
+                color="orange"
+                fluid
+                size="large"
+              >
+                Submit
+              </Button>
+            </Segment>
+          </Form>
+          <Message>
+            Already a user? <Link to="/login">Login</Link>
+          </Message>
+          {this.state.error.length > 0 ? (
+            <Message error>
+              <h3>Error</h3>
+              <p>{error}</p>
+            </Message>
+          ) : null}
+        </GridColumn>
+      </Grid>
+    );
   }
 }
 
-export default Register
+export default Register;
