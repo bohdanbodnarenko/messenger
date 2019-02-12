@@ -22,7 +22,8 @@ export class Register extends Component {
     password: "",
     passwordConfirm: "",
     error: "",
-    loading: false
+    loading: false,
+    usersRef: firebase.database().ref("users")
   };
 
   handleChange = () => event => {
@@ -61,6 +62,13 @@ export class Register extends Component {
     }
   };
 
+  saveUser = createdUser => {
+    return this.state.usersRef.child(createdUser.user.uid).set({
+      name: createdUser.user.displayName,
+      avatar: createdUser.user.photoURL
+    });
+  };
+
   handleSubmit = () => event => {
     event.preventDefault();
     if (this.isFormValid()) {
@@ -78,14 +86,17 @@ export class Register extends Component {
               )}?d=identicon`
             })
             .then(() => {
-              this.setState({ loading: false });
+              this.saveUser(createdUser).then(() => {
+                console.log("user saved");
+                this.setState({ loading: false });
+              });
             })
             .catch(err => {
               this.setState({ error: err.message, loading: false });
             });
         })
         .catch(error => {
-          console.log(error);
+          console.error(error);
           this.setState({ error: error.message, loading: false });
         });
     }
@@ -102,10 +113,10 @@ export class Register extends Component {
     } = this.state;
     return (
       <Grid className="app" textAlign="center" verticalAlign="middle">
-        <GridColumn style={{ maxWidth: 450 }}>
-          <Header as="h2" icon color="orange" textAlign="center">
+        <GridColumn style={{ maxWidth: 550 }}>
+          <Header as="h1" icon color="orange" textAlign="center">
             <Icon name="puzzle piece" color="orange" />
-            Register for DevChat
+            Register for Slack Clone
           </Header>
           <Form onSubmit={this.handleSubmit()}>
             <Segment stacked>
