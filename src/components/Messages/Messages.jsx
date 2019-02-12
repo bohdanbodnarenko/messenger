@@ -57,7 +57,7 @@ export class Messages extends Component {
       <Fragment>
         <MessagesHeader />
         <Segment>
-          <CommentGroup className="messages">
+          <CommentGroup className='messages'>
             {this.displayMessages(this.state.messages)}
           </CommentGroup>
         </Segment>

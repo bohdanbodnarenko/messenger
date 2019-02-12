@@ -27,37 +27,39 @@ export class MessageForm extends Component {
         uploadTask: this.state.storageRef.child(filePath).put(file, metadata)
       },
       () => {
-        this.state.uploadTask
-          .om(
-            "state_changed",
-            snap => {
-              const percentUploaded = Math.round(
-                (snap.bytesTransferred / snap.totalBytes) * 100
-              );
-              this.setState({ percentUploaded });
-            },
-            err => {
-              console.error(err);
-              this.setState({
-                error: err.message,
-                uploadState: "error",
-                uploadTask: null
-              });
-            },
-            () => {
-              this.state.uploadTask.snapshot.ref.getDownloadURL().then(url => {
-                this.sendFileMessage(url, ref, pathToUpload);
-              });
-            }
-          )
-          .catch(err => {
+        this.state.uploadTask.on(
+          "state_changed",
+          snap => {
+            const percentUploaded = Math.round(
+              (snap.bytesTransferred / snap.totalBytes) * 100
+            );
+            console.log(percentUploaded);
+            this.setState({ percentUploaded });
+          },
+          err => {
             console.error(err);
             this.setState({
               error: err.message,
               uploadState: "error",
               uploadTask: null
             });
-          });
+          },
+          () => {
+            this.state.uploadTask.snapshot.ref
+              .getDownloadURL()
+              .then(url => {
+                this.sendFileMessage(url, ref, pathToUpload);
+              })
+              .catch(err => {
+                console.error(err);
+                this.setState({
+                  error: err.message,
+                  uploadState: "error",
+                  uploadTask: null
+                });
+              });
+          }
+        );
       }
     );
   };
@@ -67,14 +69,15 @@ export class MessageForm extends Component {
       .child(pathToUpload)
       .push()
       .set(this.createMessage(url))
-      .then(()=>{
-          this.setState({uploadState:'done'})
+      .then(() => {
+        this.setState({ uploadState: "done" });
+        this.closeModal();
       })
-      .catch(err=>{
-          console.error(err);
-          this.setState({
-              error:err.message
-          })
+      .catch(err => {
+        console.error(err);
+        this.setState({
+          error: err.message
+        });
       });
   };
 
