@@ -116,7 +116,7 @@ export class Register extends Component {
         <GridColumn style={{ maxWidth: 550 }}>
           <Header as="h1" icon color="orange" textAlign="center">
             <Icon name="puzzle piece" color="orange" />
-            Register for Slack Clone
+            Register to Social Network
           </Header>
           <Form onSubmit={this.handleSubmit()}>
             <Segment stacked>
@@ -185,7 +185,7 @@ export class Register extends Component {
                 fluid
                 size="large"
               >
-                Submit
+                Register
               </Button>
             </Segment>
           </Form>

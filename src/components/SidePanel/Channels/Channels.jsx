@@ -16,7 +16,7 @@ import {
 } from "semantic-ui-react";
 
 import firebase from "../../../firebase";
-import { setCurrentChannel } from "../../../store/actions";
+import { setCurrentChannel, setPrivateChannel } from "../../../store/actions";
 
 export class Channels extends Component {
   state = {
@@ -76,6 +76,7 @@ export class Channels extends Component {
   changeChannel = channel => {
     this.setActiveChannel(channel);
     this.props.setCurrentChannel(channel);
+    this.props.setPrivateChannel(false);
   };
 
   setActiveChannel = channel => {
@@ -132,7 +133,7 @@ export class Channels extends Component {
   render() {
     return (
       <Fragment>
-        <MenuMenu style={{ paddingBottom: "2em" }}>
+        <MenuMenu className="menu">
           <MenuItem>
             <span>
               <Icon name="exchange" />
@@ -189,7 +190,8 @@ export class Channels extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setCurrentChannel: channel => dispatch(setCurrentChannel(channel))
+    setCurrentChannel: channel => dispatch(setCurrentChannel(channel)),
+    setPrivateChannel: isPrivate => dispatch(setPrivateChannel(isPrivate))
   };
 };
 

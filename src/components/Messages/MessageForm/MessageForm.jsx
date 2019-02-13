@@ -3,6 +3,7 @@ import { Segment, Input, Button, ButtonGroup } from "semantic-ui-react";
 import firebase from "../../../firebase";
 import FileModal from "../../../UI/FileModal";
 import uuidv4 from "uuid/v4";
+import ProgressBar from "../../../UI/ProgressBar";
 
 export class MessageForm extends Component {
   state = {
@@ -71,7 +72,7 @@ export class MessageForm extends Component {
       .set(this.createMessage(url))
       .then(() => {
         this.setState({ uploadState: "done" });
-        this.closeModal();
+        // this.closeModal();
       })
       .catch(err => {
         console.error(err);
@@ -133,6 +134,12 @@ export class MessageForm extends Component {
     }
   };
 
+  handleKeyPress = () => event => {
+    if (event.key==='Enter') {
+        this.sendMessage()
+    }
+  }
+
   render() {
     const { message } = this.state;
     return (
@@ -147,6 +154,11 @@ export class MessageForm extends Component {
           onChange={this.handleChange()}
           className={this.state.error.includes("message") ? "error" : ""}
           placeholder="Write your message"
+          onKeyPress={this.handleKeyPress()}
+        />
+        <ProgressBar
+          uploadState={this.state.uploadState}
+          percentUploaded={this.state.percentUploaded}
         />
         <ButtonGroup icon widths="2">
           <Button
@@ -159,17 +171,18 @@ export class MessageForm extends Component {
           />
           <Button
             color="teal"
+            disabled={this.state.uploadState==='uploading'}
             onClick={this.openModal}
             content="Upload Media"
             labelPosition="right"
             icon="cloud upload"
           />
-          <FileModal
-            uploadFile={this.uploadFile}
-            open={this.state.isModalOpen}
-            close={this.closeModal}
-          />
         </ButtonGroup>
+        <FileModal
+          uploadFile={this.uploadFile}
+          open={this.state.isModalOpen}
+          close={this.closeModal}
+        />
       </Segment>
     );
   }

@@ -52,7 +52,7 @@ export class Login extends Component {
         <GridColumn style={{ maxWidth: 550 }}>
           <Header as="h1" icon color="violet" textAlign="center">
             <Icon name="puzzle piece" color="violet" />
-            Login to Slack Clone
+            Login to Social Network
           </Header>
           <Form onSubmit={this.handleSubmit()}>
             <Segment stacked>
@@ -93,7 +93,7 @@ export class Login extends Component {
                 fluid
                 size="large"
               >
-                Submit
+                Login
               </Button>
             </Segment>
           </Form>

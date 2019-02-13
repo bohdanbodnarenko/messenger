@@ -8,13 +8,14 @@ export class MessagesHeader extends Component {
       <Segment clearing>
         <Header fluid="true" as="h2" floated="left" style={{ marginBottom: 0 }}>
           <span>
-            Channel
+            # {this.props.channelName}
             <Icon name="star outline" color="black" />
           </span>
-          <HeaderSubHeader>2 Users</HeaderSubHeader>
+          <HeaderSubHeader>{this.props.numUniqueUsers}</HeaderSubHeader>
         </Header>
         <Header floated="right">
           <Input
+            onChange={this.props.search()}
             size="mini"
             icon="search"
             name="searchItem"

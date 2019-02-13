@@ -25,6 +25,7 @@ class FileModal extends Component {
   sendFile = () => {
     const { file } = this.state;
     if (this.isValid(file.name)) {
+        this.props.close();
         const metadata = {contentType:mime.lookup(file.name)}
         this.props.uploadFile(file,metadata)
     }
