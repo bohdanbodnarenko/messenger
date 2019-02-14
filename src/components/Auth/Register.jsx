@@ -112,7 +112,7 @@ export class Register extends Component {
       loading
     } = this.state;
     return (
-      <Grid className="app" textAlign="center" verticalAlign="middle">
+      // <Grid className="app" textAlign="center" verticalAlign="middle">
         <GridColumn style={{ maxWidth: 550 }}>
           <Header as="h1" icon color="orange" textAlign="center">
             <Icon name="puzzle piece" color="orange" />
@@ -199,7 +199,7 @@ export class Register extends Component {
             </Message>
           ) : null}
         </GridColumn>
-      </Grid>
+      // </Grid>
     );
   }
 }

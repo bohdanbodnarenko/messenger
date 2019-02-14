@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import firebase from "../../firebase";
 import {
@@ -36,8 +37,7 @@ export class Login extends Component {
       firebase
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
-        .then(signedInUser => {
-        })
+        .then(signedInUser => {})
         .catch(err => {
           console.error(err);
           this.setState({ error: err.message, loading: false });
@@ -45,10 +45,23 @@ export class Login extends Component {
     }
   };
 
+  componentWillMount() {
+    if (this.props.user && this.props.history) {
+      this.props.history.push("/");
+    }
+  }
+
   render() {
     const { email, password, error, loading } = this.state;
     return (
-      <Grid className="app" textAlign="center" verticalAlign="middle">
+      <Grid
+        columns={2}
+        relaxed="very"
+        stackable
+        className="app"
+        textAlign="center"
+        verticalAlign="middle"
+      >
         <GridColumn style={{ maxWidth: 550 }}>
           <Header as="h1" icon color="violet" textAlign="center">
             <Icon name="puzzle piece" color="violet" />
@@ -65,9 +78,7 @@ export class Login extends Component {
                 type="email"
                 value={email}
                 className={
-                  this.state.error.toLowerCase().includes("user")
-                    ? "error"
-                    : ""
+                  this.state.error.toLowerCase().includes("user") ? "error" : ""
                 }
                 onChange={this.handleChange()}
               />
@@ -112,4 +123,10 @@ export class Login extends Component {
   }
 }
 
-export default Login;
+const mapStateToProps = state => {
+  return {
+    user: state.user.currentUser
+  };
+};
+
+export default connect(mapStateToProps)(Login);

@@ -5,7 +5,7 @@ import FileModal from "../../../UI/FileModal";
 import uuidv4 from "uuid/v4";
 import ProgressBar from "../../../UI/ProgressBar";
 
-export class MessageForm extends Component {
+export class  MessageForm extends Component {
   state = {
     storageRef: firebase.storage().ref(),
     uploadState: "",
@@ -17,10 +17,18 @@ export class MessageForm extends Component {
     isModalOpen: false
   };
 
+  getPath = () => {
+      if (this.props.isPrivate) {
+          return `chat/private-${this.state.channel.id}`
+      }else{
+          return 'chat/public'
+      }
+  }
+
   uploadFile = (file, metadata) => {
     const pathToUpload = this.props.channel.id;
     const ref = this.props.messagesRef;
-    const filePath = `chat/public/${uuidv4()}.jpeg`;
+    const filePath = `${this.getPath()}/${uuidv4()}.jpeg`;
 
     this.setState(
       {

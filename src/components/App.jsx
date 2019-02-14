@@ -22,6 +22,7 @@ class App extends Component {
             key={this.props.user && this.props.user.uid}
             channel={this.props.currentChannel}
             user={this.props.user}
+            isPrivate={this.props.isPrivate}
           />
         </GridColumn>
         <GridColumn width={4}>
@@ -35,7 +36,8 @@ class App extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user.currentUser,
-    currentChannel: state.channel.currentChannel
+    currentChannel: state.channel.currentChannel,
+    isPrivate: state.channel.isPrivate
   };
 };
 

@@ -1,12 +1,8 @@
 import React, { Component, Fragment } from "react";
-import {
-  Segment,
-  CommentGroup,
-  Label,
-  Grid,
-  GridColumn,
-  LabelGroup
-} from "semantic-ui-react";
+import { connect } from "react-redux";
+
+
+import { Segment, CommentGroup, Label } from "semantic-ui-react";
 import MessagesHeader from "./MessagesHeader/MessagesHeader";
 import MessageForm from "./MessageForm/MessageForm";
 import firebase from "../../firebase";
@@ -14,36 +10,41 @@ import Message from "./Message/Message";
 
 export class Messages extends Component {
   state = {
-    messaegsRef: firebase.database().ref("messages"),
+    messagesRef: firebase.database().ref("messages"),
+    privateMessagesRef: firebase.database().ref("privateMessages"),
     messages: [],
     messagesLoading: true,
     numUniqueUsers: "",
     searchResults: [],
-    searchKey: ""
+    searchKey: "",
   };
 
-  componentDidMount() {
-    if (this.props.channel && this.props.user) {
-      console.log("yeah");
-      this.addListeners(this.props.channel.id);
+    componentDidMount() {
+      // if (this.props.channel ) {
+    //   this.addListeners(this.props.channel.id);
+      // }
     }
-  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.channel && nextProps.user) {
-      console.log(nextProps.channel.id);
       this.addListeners(nextProps.channel.id);
     }
   }
 
-  addListeners = channedId => {
-    this.addMessageListener(channedId);
+  getMessagesRef = () => {
+    return this.props.isPrivate
+      ? this.state.privateMessagesRef
+      : this.state.messagesRef;
   };
 
-  addMessageListener = channedId => {
-    let loadedMessages = [];
+  addListeners = channelId => {
+    this.addMessageListener(channelId);
+  };
 
-    this.state.messaegsRef.child(channedId).on("child_added", snap => {
+  addMessageListener = channelId => {
+    let loadedMessages = [];
+    const ref = this.getMessagesRef();
+    ref.child(channelId).on("child_added", snap => {
       loadedMessages.push(snap.val());
       this.countUniqueUsers(loadedMessages);
       this.setState({
@@ -71,7 +72,6 @@ export class Messages extends Component {
   handleSearchMessage = () => {
     const channelMessages = [...this.state.messages];
     const regex = new RegExp(this.state.searchKey, "gi");
-    console.log(channelMessages);
     this.setState({
       searchResults: channelMessages.filter(message => {
         if (message.content) {
@@ -95,7 +95,9 @@ export class Messages extends Component {
     });
   };
 
-  displayChannelName = channel => (channel ? `${channel.name}` : "");
+  displayChannelName = channel => {
+    return channel ? `${this.props.isPrivate ? "@" : "#"}${channel.name}` : "";
+  };
 
   displayMessages = messages => {
     if (messages.length > 0) {
@@ -116,6 +118,7 @@ export class Messages extends Component {
           search={this.handleSearchChange}
           channelName={this.displayChannelName(this.props.channel)}
           numUniqueUsers={this.state.numUniqueUsers}
+          isPrivate={this.props.isPrivate}
         />
         <Segment>
           <CommentGroup className="messages">
@@ -126,18 +129,29 @@ export class Messages extends Component {
                 this.displayMessages(this.state.messages)
               )
             ) : (
-              <Label style={{color:'#fff',background:'#e6186d'}} size="big" content="No messages yet!" />
+              <Label
+                style={{ color: "#fff", background: "#e6186d" }}
+                size="big"
+                content="No messages yet!"
+              />
             )}
           </CommentGroup>
         </Segment>
         <MessageForm
           channel={this.props.channel}
           user={this.props.user}
-          messagesRef={this.state.messaegsRef}
+          messagesRef={this.getMessagesRef()}
+          isPrivate={this.props.isPrivate}
         />
       </Fragment>
     );
   }
 }
 
-export default Messages;
+const mapStateToProps = state => {
+    return {
+      currentChannel: state.channel.currentChannel,
+    };
+  };
+
+export default connect(mapStateToProps)(Messages);

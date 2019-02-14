@@ -17,7 +17,6 @@ class Root extends Component {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.props.setUser(user);
-        this.props.history.push("/");
       } else {
         this.props.history.push("/login");
         this.props.clearUser();
@@ -57,6 +56,14 @@ const RootWithRouter = withRouter(
     mapDispatchToProps
   )(Root)
 );
+
+const app = (
+  <Provider store={store}>
+      <BrowserRouter>
+          <App />
+      </BrowserRouter>
+  </Provider>
+)
 
 ReactDOM.render(
   <Provider store={store}>

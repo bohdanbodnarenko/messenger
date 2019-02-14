@@ -8,6 +8,7 @@ import { setCurrentChannel, setPrivateChannel } from "../../../store/actions";
 export class DirectMessages extends Component {
   state = {
     users: [],
+    activeChannel:null,
     user: this.props.user,
     usersRef: firebase.database().ref("users"),
     connectedRef: firebase.database().ref(".info/connected"),
@@ -74,7 +75,12 @@ export class DirectMessages extends Component {
     };
     this.props.setCurrentChannel(channelData);
     this.props.setPrivateChannel(true);
+    this.setActiveChannel(user.uid );
   };
+
+  setActiveChannel = activeChannel => {
+      this.setState({activeChannel})
+  }
 
   getChannelId = uid => {
     return uid < this.state.user.uid
@@ -93,6 +99,7 @@ export class DirectMessages extends Component {
         </MenuItem>
         {users.map(user => (
           <MenuItem
+            active ={user.uid === this.state.activeChannel}
             key={user.uid}
             onClick={() => this.changeChannel(user)}
             style={{ opacity: 0.7, fontStyle: "italic" }}
