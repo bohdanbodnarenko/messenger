@@ -37,7 +37,7 @@ export class Login extends Component {
       firebase
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
-        .then(signedInUser => {})
+        .then(signedInUser => {this.props.history.push('/')})
         .catch(err => {
           console.error(err);
           this.setState({ error: err.message, loading: false });
@@ -46,7 +46,8 @@ export class Login extends Component {
   };
 
   componentWillMount() {
-    if (this.props.user && this.props.history) {
+    if (!this.props.user && this.props.history) {
+      console.log(1)
       this.props.history.push("/");
     }
   }

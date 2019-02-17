@@ -42,6 +42,7 @@ export class UserPanel extends Component {
       .signOut()
       .then(() => {
         alert("Log out successful!");
+        // this.props.history.push('/')
       });
   };
 

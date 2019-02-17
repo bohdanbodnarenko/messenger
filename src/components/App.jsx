@@ -40,7 +40,11 @@ class App extends Component {
             />
           </GridColumn>
           <GridColumn width={4}>
-            <MetaPanel />
+            <MetaPanel
+              userPosts={this.props.userPosts}
+              channel={this.props.currentChannel}
+              isPrivate={this.props.isPrivate}
+            />
           </GridColumn>
         </Grid>
       );
@@ -54,7 +58,8 @@ const mapStateToProps = state => {
   return {
     user: state.user.currentUser,
     currentChannel: state.channel.currentChannel,
-    isPrivate: state.channel.isPrivate
+    isPrivate: state.channel.isPrivate,
+    userPosts: state.channel.userPosts
   };
 };
 

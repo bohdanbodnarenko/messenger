@@ -4,11 +4,21 @@ body,
   height: 100vh;
   background: #eee;
   padding: 1em;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: .9em;
 }
 
 .clickable-icon {
   cursor: pointer;
 
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+i {
+  transition: .15s ease-in
 }
 
 .clickable-icon:hover {
@@ -22,7 +32,7 @@ body,
   margin: 0;
 }
 
-.message__form { 
+.message__form {
   position: fixed !important;
   bottom: 1em;
   margin-left: 320px !important;
@@ -31,20 +41,20 @@ body,
   z-index: 200;
 }
 
-.message__self{
-  border-left:2px solid orange;
+.message__self {
+  border-left: 2px solid orange;
   padding-left: 8px;
   /* float: right; */
 }
 
-.message_image{
+.message_image {
   padding: 1em;
 }
 
-.progress__bar{
-  margin:.3em 0 0 0 !important;
+.progress__bar {
+  margin: .3em 0 0 0 !important;
 }
 
-.menu{
+.menu {
   padding-bottom: 2em;
 }

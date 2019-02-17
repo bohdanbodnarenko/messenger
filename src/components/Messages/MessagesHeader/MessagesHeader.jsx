@@ -8,12 +8,17 @@ export class MessagesHeader extends Component {
       <Segment clearing>
         <Header fluid="true" as="h2" floated="left" style={{ marginBottom: 0 }}>
           <span>
+            {this.props.channelName}
             {this.props.isPrivate ? (
               <Icon name="user " color="black" />
             ) : (
-              <Icon name="star outline" color="black" />
+              <Icon
+                onClick={this.props.handleStar}
+                name={this.props.isChannelStarred ? "star" : "star outline"}
+                color={this.props.isChannelStarred ? "yellow" : "black"}
+                className="pointer"
+              />
             )}
-            {this.props.channelName}
           </span>
           <HeaderSubHeader>{this.props.numUniqueUsers}</HeaderSubHeader>
         </Header>

@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import md5 from "md5";
 import firebase from "../../firebase";
 import {
-  Grid,
   GridColumn,
   Header,
   Segment,
