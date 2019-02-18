@@ -37,7 +37,6 @@ export class FavouriteChannels extends Component {
         const filteredChannels = this.state.favouriteChannels.filter(
           channel => channel.id !== channelToRemove.id
         );
-        console.log(filteredChannels)
         this.setState({favouriteChannels:filteredChannels})
       });
   };
@@ -78,11 +77,6 @@ export class FavouriteChannels extends Component {
             Favourite
           </span>
           {"  "}({favouriteChannels.length}){" "}
-          <Icon
-            onClick={this.openModal}
-            className="clickable-icon"
-            name="add"
-          />
         </MenuItem>
         {this.displayChannels(favouriteChannels)}
       </MenuMenu>

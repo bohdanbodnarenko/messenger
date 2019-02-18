@@ -6,7 +6,6 @@ import MessagesHeader from "./MessagesHeader/MessagesHeader";
 import MessageForm from "./MessageForm/MessageForm";
 import firebase from "../../firebase";
 import Message from "./Message/Message";
-import Spinner from "../../UI/Spinner";
 import { setUserPosts } from "../../store/actions";
 
 export class Messages extends Component {

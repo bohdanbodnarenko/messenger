@@ -1,19 +1,55 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
+import styled from "styled-components";
 import md5 from "md5";
 import firebase from "../../firebase";
 import {
-  GridColumn,
-  Header,
-  Segment,
-  FormInput,
-  Icon,
-  Button,
-  Form,
-  Message
-} from "semantic-ui-react";
+  Typography,
+  TextField,
+  SnackbarContent,
+  Button
+} from "@material-ui/core";
+import * as Icons from "@material-ui/icons/";
 
+const InputWrapper = styled.div`
+  width: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  @media (max-width: 700px) {
+    width: 95%;
+  }
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 80%;
+  align-items: center;
+`;
+
+const AuthWrapper = styled.div`
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60vw;
+  padding: 12px;
+  border: #0facf3 1.5px solid;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 65vh;
+  color: #342e37;
+  text-align: center;
+  @media (max-width: 700px) {
+    width: 90vw;
+  }
+`;
 export class Register extends Component {
   state = {
     username: "",
@@ -111,94 +147,104 @@ export class Register extends Component {
       loading
     } = this.state;
     return (
-      // <Grid className="app" textAlign="center" verticalAlign="middle">
-        <GridColumn style={{ maxWidth: 550 }}>
-          <Header as="h1" icon color="orange" textAlign="center">
-            <Icon name="puzzle piece" color="orange" />
-            Register to Social Network
-          </Header>
-          <Form onSubmit={this.handleSubmit()}>
-            <Segment stacked>
-              <FormInput
-                fluid
-                name="username"
-                icon="user"
-                iconPosition="left"
-                placeholder="Username"
-                type="text"
-                value={username}
-                className={
-                  this.state.error.toLowerCase().includes("name") ? "error" : ""
-                }
-                onChange={this.handleChange()}
-              />
-              <FormInput
-                fluid
-                name="email"
-                icon="mail"
-                iconPosition="left"
-                placeholder="Email"
-                type="email"
-                value={email}
-                className={
-                  this.state.error.toLowerCase().includes("email")
-                    ? "error"
-                    : ""
-                }
-                onChange={this.handleChange()}
-              />
-              <FormInput
-                fluid
-                name="password"
-                icon="lock"
-                iconPosition="left"
-                placeholder="Password"
-                type="password"
-                value={password}
-                className={
-                  this.state.error.toLowerCase().includes("password")
-                    ? "error"
-                    : ""
-                }
-                onChange={this.handleChange()}
-              />
-              <FormInput
-                fluid
-                name="passwordConfirm"
-                icon="repeat"
-                iconPosition="left"
-                placeholder="Confirm Password"
-                type="password"
-                value={passwordConfirm}
-                className={
-                  this.state.error.toLowerCase().includes("password")
-                    ? "error"
-                    : ""
-                }
-                onChange={this.handleChange()}
-              />
-              <Button
-                disabled={loading}
-                className={loading ? "loading" : ""}
-                color="orange"
-                fluid
-                size="large"
-              >
-                Register
-              </Button>
-            </Segment>
-          </Form>
-          <Message>
-            Already a user? <Link to="/login">Login</Link>
-          </Message>
-          {this.state.error.length > 0 ? (
-            <Message error>
-              <h3>Error</h3>
-              <p>{error}</p>
-            </Message>
-          ) : null}
-        </GridColumn>
-      // </Grid>
+      <AuthWrapper>
+        <Typography
+          style={{ marginTop: "20px", fontWeight: "bold" }}
+          component="h2"
+          variant="display2"
+          align="center"
+          gutterBottom
+        >
+          Register to <span style={{ color: "#3C4859" }}>Social Network</span>{" "}
+        </Typography>
+        <Form onSubmit={this.handleSubmit()}>
+          <InputWrapper>
+            <Icons.Person />
+            <TextField
+              style={{ width: "93.5%", fontSize: "1.2em" }}
+              name="username"
+              variant="outlined"
+              label="Username"
+              type="text"
+              value={username}
+              error={this.state.error.toLowerCase().includes("name")}
+              onChange={this.handleChange()}
+            />
+          </InputWrapper>
+          <InputWrapper>
+            <Icons.Mail />
+            <TextField
+              style={{ width: "93.5%", fontSize: "1.2em" }}
+              name="email"
+              variant="outlined"
+              label="Email"
+              type="email"
+              value={email}
+              error={this.state.error.toLowerCase().includes("email")}
+              onChange={this.handleChange()}
+            />
+          </InputWrapper>
+
+          <InputWrapper>
+            <Icons.Lock />
+            <TextField
+              style={{ width: "93.5%", fontSize: "1.2em" }}
+              name="password"
+              variant="outlined"
+              label="Password"
+              type="password"
+              value={password}
+              error={this.state.error.toLowerCase().includes("password")}
+              onChange={this.handleChange()}
+            />
+          </InputWrapper>
+
+          <InputWrapper>
+            <Icons.Repeat />
+            <TextField
+              style={{ width: "93.5%", fontSize: "1.2em" }}
+              name="passwordConfirm"
+              variant="outlined"
+              label="Confirm Password"
+              type="password"
+              value={passwordConfirm}
+              error={this.state.error.toLowerCase().includes("password")}
+              onChange={this.handleChange()}
+            />
+          </InputWrapper>
+          <Button
+            onClick={this.handleSubmit()}
+            style={{ background: "#0facf3", color: "#fff" }}
+            disabled={loading}
+            variant="contained"
+            aria-label="Add"
+            size="large"
+          >
+            Register
+          </Button>
+        </Form>
+        {this.state.error.length > 0 ? (
+          <SnackbarContent
+            style={{
+              margin: "auto",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+            message={
+              <div>
+                <div>
+                  <Icons.Error color="error" />
+                </div>
+                <span>{error}</span>
+              </div>
+            }
+          />
+        ) : null}
+        <span>
+          Already a user? <Link to="/login">Login</Link>
+        </span>
+      </AuthWrapper>
     );
   }
 }
