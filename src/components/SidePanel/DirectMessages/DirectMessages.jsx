@@ -1,18 +1,22 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
-import { MenuMenu, MenuItem, Icon } from "semantic-ui-react";
+import { Icon } from "semantic-ui-react";
 import firebase from "../../../firebase";
 import { setCurrentChannel, setPrivateChannel } from "../../../store/actions";
+import SideMenu from "../SideMenuModel/SideMenu.model";
+import * as Icons from "@material-ui/icons";
+import { ListItem } from "@material-ui/core";
 
 export class DirectMessages extends Component {
   state = {
     users: [],
-    activeChannel:null,
+    activeChannel: null,
     user: this.props.user,
     usersRef: firebase.database().ref("users"),
     connectedRef: firebase.database().ref(".info/connected"),
-    presenceRef: firebase.database().ref("presence")
+    presenceRef: firebase.database().ref("presence"),
+    open: false
   };
 
   componentDidMount() {
@@ -75,43 +79,53 @@ export class DirectMessages extends Component {
     };
     this.props.setCurrentChannel(channelData);
     this.props.setPrivateChannel(true);
-    this.setActiveChannel(user.uid );
+    this.setActiveChannel(user.uid);
   };
 
   setActiveChannel = activeChannel => {
-      this.setState({activeChannel})
-  }
+    this.setState({ activeChannel });
+  };
 
   getChannelId = uid => {
     return uid < this.state.user.uid
       ? `${uid}/${this.state.user.uid}`
       : `${this.state.user.uid}/${uid}`;
   };
+
+  toggleOpen = () => {
+    this.setState({ open: !this.state.open });
+  };
   render() {
-    const { users } = this.state;
+    const { users, open } = this.state;
     return (
-      <MenuMenu className="menu">
-        <MenuItem>
-          <span>
-            <Icon name="users" /> Users
-          </span>{" "}
-          ({this.state.users.length})
-        </MenuItem>
+      <SideMenu
+        icon={<Icons.People />}
+        toggleOpen={this.toggleOpen}
+        name="Users"
+        open={open}
+        length={this.state.users.length}
+      >
         {users.map(user => (
-          <MenuItem
-            active ={user.uid === this.state.activeChannel}
+          <ListItem
             key={user.uid}
             onClick={() => this.changeChannel(user)}
-            style={{ opacity: 0.7, fontStyle: "italic" }}
+            className="link"
+            style={{
+              opacity: 0.7,
+              fontStyle: "italic",
+              width: "100%",
+              height: "15%",
+              marginBottom: "5px"
+            }}
           >
-            <Icon
-              name="circle"
-              color={this.isUserOnline(user) ? "green" : "red"}
+            <Icons.Label
+              style={{ color: this.isUserOnline(user) ? "#02C39A" : "#D90429" }}
             />
-            @ {user.name}
-          </MenuItem>
+            {user.name}
+            {/* <Icons.BlurCircularRounded /> */}
+          </ListItem>
         ))}
-      </MenuMenu>
+      </SideMenu>
     );
   }
 }

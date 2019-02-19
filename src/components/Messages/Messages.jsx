@@ -7,7 +7,26 @@ import MessageForm from "./MessageForm/MessageForm";
 import firebase from "../../firebase";
 import Message from "./Message/Message";
 import { setUserPosts } from "../../store/actions";
+import { Paper, withStyles } from "@material-ui/core";
+import styled from "styled-components";
 
+const MessagesWrapper = styled.div`
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 10% 85% 5%;
+`;
+
+const styles = {
+  root: {
+    padding: "2px 4px",
+    width: "101%",
+    boxShadow:'none',
+    maxHeight: "100%",
+    overflowY: "scroll"
+  }
+};
 export class Messages extends Component {
   state = {
     messagesRef: firebase.database().ref("messages"),
@@ -172,42 +191,37 @@ export class Messages extends Component {
   };
 
   render() {
+    const { classes } = this.props;
     return (
-      <Segment loading={!this.props.channel || !this.props.user}>
-        <Fragment>
-          <MessagesHeader
-            search={this.handleSearchChange}
-            channelName={this.displayChannelName(this.props.channel)}
-            numUniqueUsers={this.state.numUniqueUsers}
-            isPrivate={this.props.isPrivate}
-            handleStar={this.handleStar}
-            isChannelStarred={this.state.isChannelStarred}
-          />
-          <Segment>
-            <CommentGroup className="messages">
-              {this.state.messages.length > 0 ? (
-                this.state.searchKey ? (
-                  this.displayMessages(this.state.searchResults)
-                ) : (
-                  this.displayMessages(this.state.messages)
-                )
-              ) : (
-                <Label
-                  style={{ color: "#fff", background: "#e6186d" }}
-                  size="big"
-                  content="No messages yet!"
-                />
-              )}
-            </CommentGroup>
-          </Segment>
-          <MessageForm
-            channel={this.props.channel}
-            user={this.props.user}
-            messagesRef={this.getMessagesRef()}
-            isPrivate={this.props.isPrivate}
-          />
-        </Fragment>
-      </Segment>
+      <MessagesWrapper>
+        <MessagesHeader
+          search={this.handleSearchChange}
+          channelName={this.props.channel && this.props.channel.name}
+          numUniqueUsers={this.state.numUniqueUsers}
+          isPrivate={this.props.isPrivate}
+          handleStar={this.handleStar}
+          isChannelStarred={this.state.isChannelStarred}
+        />
+        <Paper className={classes.root}>
+          {this.state.messages.length > 0 ? (
+            this.state.searchKey ? (
+              this.displayMessages(this.state.searchResults)
+            ) : (
+              this.displayMessages(this.state.messages)
+            )
+          ) : (
+            <Paper
+              style={{ color: "#fff", background: "#e6186d" }}
+            >No messages yet!</Paper>
+          )}
+        </Paper>
+        <MessageForm
+          channel={this.props.channel}
+          user={this.props.user}
+          messagesRef={this.getMessagesRef()}
+          isPrivate={this.props.isPrivate}
+        />
+      </MessagesWrapper>
     );
   }
 }
@@ -219,8 +233,11 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = dispatch => {
   return {
-    setUserPosts: userPosts => dispatch(setUserPosts(userPosts)) 
+    setUserPosts: userPosts => dispatch(setUserPosts(userPosts))
   };
 };
 
-export default connect(mapStateToProps,mapDispatchToProps)(Messages);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(Messages));

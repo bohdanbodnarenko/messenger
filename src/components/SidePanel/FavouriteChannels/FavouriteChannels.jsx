@@ -2,15 +2,19 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 import firebase from "../../../firebase";
-import { MenuMenu, MenuItem, Icon } from "semantic-ui-react";
+// import { MenuMenu, MenuItem, Icon } from "semantic-ui-react";
 import { setCurrentChannel, setPrivateChannel } from "../../../store/actions";
+import { ListItem } from "@material-ui/core";
+import * as Icons from "@material-ui/icons";
+import SideMenu from "../SideMenuModel/SideMenu.model";
 
 export class FavouriteChannels extends Component {
   state = {
     user: this.props.user,
     favouriteChannels: [],
     activeChannel: "",
-    usersRef: firebase.database().ref("users")
+    usersRef: firebase.database().ref("users"),
+    open: false
   };
 
   componentDidMount = () => {
@@ -37,7 +41,7 @@ export class FavouriteChannels extends Component {
         const filteredChannels = this.state.favouriteChannels.filter(
           channel => channel.id !== channelToRemove.id
         );
-        this.setState({favouriteChannels:filteredChannels})
+        this.setState({ favouriteChannels: filteredChannels });
       });
   };
 
@@ -50,15 +54,20 @@ export class FavouriteChannels extends Component {
   displayChannels = channels => {
     if (channels.length > 0) {
       return channels.map(channel => (
-        <MenuItem
+        <ListItem
+          className="link"
           key={channel.id}
           onClick={() => this.changeChannel(channel)}
           name={channel.name}
-          style={{ opacity: 0.7 }}
-          active={channel.id === this.state.activeChannel}
+          style={{
+            opacity: 0.7,
+            width: "100%",
+            height: "15%"
+          }}
         >
-          # {channel.name}
-        </MenuItem>
+          <Icons.ChatBubble />
+          {channel.name}
+        </ListItem>
       ));
     }
   };
@@ -67,19 +76,22 @@ export class FavouriteChannels extends Component {
     this.setState({ activeChannel: channel.id });
   };
 
+  toggleOpen = () => {
+    this.setState({ open: !this.state.open });
+  };
+
   render() {
-    const { favouriteChannels } = this.state;
+    const { favouriteChannels, open } = this.state;
     return (
-      <MenuMenu className="menu">
-        <MenuItem>
-          <span>
-            <Icon name="star" />
-            Favourite
-          </span>
-          {"  "}({favouriteChannels.length}){" "}
-        </MenuItem>
+      <SideMenu
+        open={open}
+        icon={<Icons.StarOutlined />}
+        toggleOpen={this.toggleOpen}
+        length={favouriteChannels.length}
+        name="Favourite"
+      >
         {this.displayChannels(favouriteChannels)}
-      </MenuMenu>
+      </SideMenu>
     );
   }
 }

@@ -9,6 +9,7 @@ import {
   Icon
 } from "semantic-ui-react";
 import mime from "mime-types";
+import { Dialog, DialogTitle } from "@material-ui/core";
 
 class FileModal extends Component {
   state = {
@@ -35,8 +36,8 @@ class FileModal extends Component {
 
   render() {
     return (
-      <Modal basic open={this.props.open} onClose={this.props.close}>
-        <ModalHeader>Select an image File</ModalHeader>
+      <Dialog basic open={this.props.open} onClose={this.props.close}>
+        <DialogTitle>Select an image File</DialogTitle>
         <ModalContent>
           <Input
             onChange={this.addFile()}
@@ -54,7 +55,7 @@ class FileModal extends Component {
             <Icon name="remove" /> Close
           </Button>
         </ModalActions>
-      </Modal>
+      </Dialog>
     );
   }
 }

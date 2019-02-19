@@ -1,23 +1,22 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 
-import {
-  MenuItem,
-  Icon,
-  MenuMenu,
-  Modal,
-  ModalHeader,
-  ModalContent,
-  FormField,
-  Input,
-  Form,
-  ModalActions,
-  Button,
-  Label
-} from "semantic-ui-react";
+import * as Icons from "@material-ui/icons";
+import { Icon, Label } from "semantic-ui-react";
 
 import firebase from "../../../firebase";
 import { setCurrentChannel, setPrivateChannel } from "../../../store/actions";
+import SideMenu from "../SideMenuModel/SideMenu.model";
+import {
+  ListItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
+  Button
+} from "@material-ui/core";
+import styled from "styled-components";
 
 export class Channels extends Component {
   state = {
@@ -30,7 +29,12 @@ export class Channels extends Component {
     messagesRef: firebase.database().ref("messages"),
     notifications: [],
     firstLoad: true,
-    activeChannel: ""
+    activeChannel: "",
+    open: false
+  };
+
+  toggleOpen = () => {
+    this.setState({ open: !this.state.open });
   };
 
   handleChange = () => event => {
@@ -185,18 +189,21 @@ export class Channels extends Component {
   displayChannels = () => {
     if (this.state.channels.length > 0) {
       return this.state.channels.map(channel => (
-        <MenuItem
+        <ListItem
           key={channel.id}
           onClick={() => this.changeChannel(channel)}
           name={channel.name}
-          style={{ opacity: 0.7 }}
-          active={channel.id === this.state.activeChannel}
+          style={{ opacity: 0.7, height: "15%" }}
+          className="link"
         >
+          <Icons.ChatBubble />
           {this.getNotificationCount(channel) && (
-            <Label style={{background:"#e6186d"}}>{this.getNotificationCount(channel)}</Label>
+            <Label style={{ background: "#e6186d" }}>
+              {this.getNotificationCount(channel)}
+            </Label>
           )}
-          # {channel.name}
-        </MenuItem>
+          {channel.name}
+        </ListItem>
       ));
     }
   };
@@ -205,9 +212,10 @@ export class Channels extends Component {
     channelName && channelDetails;
 
   render() {
+    const { open } = this.state;
     return (
       <Fragment>
-        <MenuMenu className="menu">
+        {/* <MenuMenu className="menu">
           <MenuItem>
             <span>
               <Icon name="exchange" />
@@ -219,44 +227,73 @@ export class Channels extends Component {
               className="clickable-icon"
               name="add"
             />
-          </MenuItem>
+          </MenuItem> */}
+        <SideMenu
+          name="Chats"
+          open={open}
+          length={this.state.channels.length}
+          toggleOpen={this.toggleOpen}
+          icon={<Icons.Chat />}
+        >
+          <ListItem className="link" onClick={this.openModal}>
+            Add Chat <Icons.AddCircle />
+          </ListItem>
           {this.displayChannels()}
-        </MenuMenu>
+        </SideMenu>
+        {/* </MenuMenu> */}
 
-        <Modal basic open={this.state.isModalOpen} onClose={this.closeModal}>
-          <ModalHeader>Add a Channel</ModalHeader>
-          <ModalContent>
-            <Form onSubmit={this.handleSubmit()}>
-              <FormField>
+        <Dialog basic open={this.state.isModalOpen} onClose={this.closeModal}>
+          <DialogTitle>Add a Channel</DialogTitle>
+          <DialogContent>
+            <form onSubmit={this.handleSubmit()}>
+              {/* <FormField>
                 <Input
                   fluid
                   placeholder="Name of Channel"
                   name="channelName"
                   onChange={this.handleChange()}
                 />
-              </FormField>
-              <FormField>
+              </FormField> */}
+              <TextField
+                autoFocus
+                margin="dense"
+                variant="outlined"
+                name="channelName"
+                label="Name of Channel"
+                type="text"
+                fullWidth
+                onChange={this.handleChange()}
+              />
+              <TextField
+                margin="dense"
+                variant="outlined"
+                name="channelDetails"
+                label="About the Channel"
+                type="text"
+                fullWidth
+                onChange={this.handleChange()}
+              />
+              {/* <FormField>
                 <Input
                   fluid
                   placeholder="About the Channel"
                   name="channelDetails"
                   onChange={this.handleChange()}
                 />
-              </FormField>
-              <ModalActions>
+              </FormField> */}
+              <DialogActions>
                 <Button
+                variant='outlined' 
+                  style={{ color: "#02C39A",borderColor:'#02C39A' }}
                   onClick={this.handleSubmit()}
                   type="submit"
-                  floated="right"
-                  color="green"
-                  inverted
                 >
-                  <Icon name="checkmark" /> Add
+                  <Icons.Check /> Add
                 </Button>
-              </ModalActions>
-            </Form>
-          </ModalContent>
-        </Modal>
+              </DialogActions>
+            </form>
+          </DialogContent>
+        </Dialog>
       </Fragment>
     );
   }

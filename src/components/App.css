@@ -1,9 +1,23 @@
+/*
+#FFFFFF
+
+#00171F
+
+#003459
+
+#007EA7
+
+#00A8E8
+
+#D90429
+*/
+
 html,
 body,
 .app {
   height: 100vh;
-  color: #9FACBD;
-  background: #9FACBD;
+  color: #F0F3BD;
+  background: #bbccd3;
   padding: 1em;
   /* font-family: 'Source Sans Pro', sans-serif; */
   font-family: 'Roboto', sans-serif;
@@ -12,9 +26,44 @@ body,
   margin: 0;
 }
 
-h1{
+h1 {
   padding: 0;
   margin: 0;
+}
+
+.noMargin {
+  margin: 0;
+}
+
+.primaryLink {
+  color: #0FACF3
+}
+
+.itemsGroupWrapper {
+  background-color: #000;
+}
+
+.centered {
+  display: flex;
+  align-items: center;
+}
+
+Avatar {
+  margin: 0;
+}
+
+.primaryLink:hover {
+  color: #fff
+}
+
+.link {
+  color: #fff;
+  cursor: pointer;
+  transition: 70ms ease-in-out;
+}
+
+.link:hover {
+  color: #00A8E8
 }
 
 

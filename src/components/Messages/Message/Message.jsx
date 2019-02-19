@@ -9,11 +9,31 @@ import {
   Image
 } from "semantic-ui-react";
 import moment from "moment";
+import { Paper, withStyles } from "@material-ui/core";
 
 const isOwnMessage = (message, user) => {
   return message.user.id === user.uid ? "message__self" : "";
 };
-
+const styles = {
+  root: {
+    padding: "2px 4px",
+    display: "flex",
+    alignItems: "center",
+    width: "100%"
+  },
+  input: {
+    marginLeft: 8,
+    flex: 1
+  },
+  iconButton: {
+    padding: 10
+  },
+  divider: {
+    width: 1,
+    height: 28,
+    margin: 4
+  }
+};
 const Message = props => {
   const isImage = message => {
     return (
@@ -21,8 +41,10 @@ const Message = props => {
     );
   };
 
+  const { classes } = props;
+
   return (
-    <Comment>
+    <Paper>
       <CommentAvatar src={props.message.user.avatar} />
       <CommentContent className={isOwnMessage(props.message, props.user)}>
         <CommentAuthor as="a">{props.message.user.name}</CommentAuthor>
@@ -35,8 +57,8 @@ const Message = props => {
           <CommentText>{props.message.content}</CommentText>
         )}
       </CommentContent>
-    </Comment>
+    </Paper>
   );
 };
 
-export default Message;
+export default withStyles(styles)(Message);

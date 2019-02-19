@@ -1,11 +1,45 @@
 import React, { Component } from "react";
-import { Segment, Input, Button, ButtonGroup } from "semantic-ui-react";
 import firebase from "../../../firebase";
 import FileModal from "../../../UI/FileModal";
 import uuidv4 from "uuid/v4";
 import ProgressBar from "../../../UI/ProgressBar";
+import styled from "styled-components";
+import {
+  InputBase,
+  withStyles,
+  Divider,
+  Paper,
+  IconButton
+} from "@material-ui/core";
+import * as Icons from "@material-ui/icons";
 
-export class  MessageForm extends Component {
+const Wrapper = styled.div`
+  display: flex;
+  background: #00171f;
+  flex-direction: column;
+`;
+
+const styles = {
+  root: {
+    padding: "2px 4px",
+    display: "flex",
+    alignItems: "center",
+    width: "100%"
+  },
+  input: {
+    marginLeft: 8,
+    flex: 1
+  },
+  iconButton: {
+    padding: 10
+  },
+  divider: {
+    width: 1,
+    height: 28,
+    margin: 4
+  }
+};
+export class MessageForm extends Component {
   state = {
     storageRef: firebase.storage().ref(),
     uploadState: "",
@@ -18,12 +52,12 @@ export class  MessageForm extends Component {
   };
 
   getPath = () => {
-      if (this.props.isPrivate) {
-          return `chat/private-${this.state.channel.id}`
-      }else{
-          return 'chat/public'
-      }
-  }
+    if (this.props.isPrivate) {
+      return `chat/private-${this.state.channel.id}`;
+    } else {
+      return "chat/public";
+    }
+  };
 
   uploadFile = (file, metadata) => {
     const pathToUpload = this.props.channel.id;
@@ -143,57 +177,50 @@ export class  MessageForm extends Component {
   };
 
   handleKeyPress = () => event => {
-    if (event.key==='Enter') {
-        this.sendMessage()
+    if (event.key === "Enter") {
+      this.sendMessage();
     }
-  }
+  };
 
   render() {
     const { message } = this.state;
+    const { classes } = this.props;
     return (
-      <Segment>
-        <Input
-          fluid
-          value={message}
-          name="message"
-          style={{ marginBottom: "0.7em" }}
-          label={<Button icon="add" />}
-          labelPosition="right"
-          onChange={this.handleChange()}
-          className={this.state.error.includes("message") ? "error" : ""}
-          placeholder="Write your message"
-          onKeyPress={this.handleKeyPress()}
-        />
+      <Wrapper>
+        <Paper className={classes.root} elevation={1}>
+          <IconButton onClick={this.openModal} className={classes.iconButton}>
+            <Icons.InsertLinkRounded />
+          </IconButton>
+          <Divider className={classes.divider} />
+          <InputBase
+            autoComplete={false}
+            onKeyPress={this.handleKeyPress()}
+            className={classes.input}
+            placeholder="Write your message"
+            onChange={this.handleChange()}
+            name="message"
+            value={message}
+          />
+          <Divider className={classes.divider} />
+          <IconButton className={classes.iconButton}>
+            <Icons.TagFacesRounded />
+          </IconButton>
+          <IconButton onClick={this.sendMessage} className={classes.iconButton}>
+            <Icons.SendRounded />
+          </IconButton>
+        </Paper>
         <ProgressBar
           uploadState={this.state.uploadState}
           percentUploaded={this.state.percentUploaded}
         />
-        <ButtonGroup icon widths="2">
-          <Button
-            className={this.state.loading ? "loading" : ""}
-            onClick={this.sendMessage}
-            color="orange"
-            content="Add Reply"
-            labelPosition="left"
-            icon="edit"
-          />
-          <Button
-            color="teal"
-            disabled={this.state.uploadState==='uploading'}
-            onClick={this.openModal}
-            content="Upload Media"
-            labelPosition="right"
-            icon="cloud upload"
-          />
-        </ButtonGroup>
         <FileModal
           uploadFile={this.uploadFile}
           open={this.state.isModalOpen}
           close={this.closeModal}
         />
-      </Segment>
+      </Wrapper>
     );
   }
 }
 
-export default MessageForm;
+export default withStyles(styles)(MessageForm);

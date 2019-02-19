@@ -8,8 +8,12 @@ import styled from "styled-components";
 
 const Menu = styled.div`
   padding: 20px;
-  background: #4c6085;
+  background: #003459;
   font-size: 1.2rem;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 150px minmax(150px, auto);
+  grid-row-gap: 15px;
 `;
 
 export class SidePanel extends Component {
@@ -20,9 +24,11 @@ export class SidePanel extends Component {
     return (
       <Menu>
         <UserPanel user={this.props.user} />
-        <FavouriteChannels user={this.props.user} />
-        <Channels user={this.props.user} />
-        <DirectMessages user={this.props.user} />
+        <div>
+          <FavouriteChannels user={this.props.user} />
+          <Channels user={this.props.user} />
+          <DirectMessages user={this.props.user} />
+        </div>
       </Menu>
     );
   }
