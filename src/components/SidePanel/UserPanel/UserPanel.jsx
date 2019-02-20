@@ -73,11 +73,11 @@ export class UserPanel extends Component {
       <SideWrapper>
         <Link to="/">
           <Header>
-            <Icons.ScatterPlot
+            <Icons.BubbleChartRounded
               style={{
                 width: 40,
                 height: 40,
-                color: "#007EA7",
+                color: "#00A8E8",
                 marginRight: "10px"
               }}
             />

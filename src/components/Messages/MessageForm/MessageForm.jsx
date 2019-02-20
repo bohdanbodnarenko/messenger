@@ -24,7 +24,8 @@ const styles = {
     padding: "2px 4px",
     display: "flex",
     alignItems: "center",
-    width: "100%"
+    width: "100%",
+    borderRightBottom:0,
   },
   input: {
     marginLeft: 8,

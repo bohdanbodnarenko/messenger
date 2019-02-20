@@ -1,16 +1,8 @@
 import React, { Component } from "react";
 
-import { Segment, Header, Icon, Input } from "semantic-ui-react";
-import {
-  Paper,
-  TextField,
-  createMuiTheme,
-  MuiThemeProvider,
-  withStyles
-} from "@material-ui/core";
+import { TextField, withStyles } from "@material-ui/core";
 import styled from "styled-components";
 import * as Icons from "@material-ui/icons";
-import { green } from "@material-ui/core/colors";
 
 const NameWrapper = styled.div`
   font-size: 2.1em;
@@ -24,19 +16,13 @@ const NameWrapper = styled.div`
 
 const Wrapper = styled.div`
   padding: 15px;
-  background: #00171f;
+  border-left: 1px #000 solid;
+  background: #003459;
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
-// const theme = createMuiTheme({
-//   palette: {
-//     primary: green
-//   },
-//   multilineColor:{
-//     color:green
-//   }
-// });
+
 const styles = {
   input: {
     color: "#fff"
@@ -44,7 +30,7 @@ const styles = {
 };
 export class MessagesHeader extends Component {
   render() {
-    console.log(this.props)
+    console.log(this.props);
     const { classes } = this.props;
     return (
       <Wrapper>

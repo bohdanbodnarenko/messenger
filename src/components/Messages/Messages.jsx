@@ -12,7 +12,7 @@ import styled from "styled-components";
 
 const MessagesWrapper = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
   display: grid;
   grid-template-columns: 100%;
   grid-template-rows: 10% 85% 5%;
@@ -20,11 +20,12 @@ const MessagesWrapper = styled.div`
 
 const styles = {
   root: {
-    padding: "2px 4px",
-    width: "101%",
-    boxShadow:'none',
+    borderRadius: 0,
+    boxShadow: "none",
     maxHeight: "100%",
-    overflowY: "scroll"
+    background: "#00171F",
+    overflowY: "scroll",
+    paddingBottom: "15px"
   }
 };
 export class Messages extends Component {
@@ -210,9 +211,9 @@ export class Messages extends Component {
               this.displayMessages(this.state.messages)
             )
           ) : (
-            <Paper
-              style={{ color: "#fff", background: "#e6186d" }}
-            >No messages yet!</Paper>
+            <Paper style={{ color: "#fff", background: "#e6186d" }}>
+              No messages yet!
+            </Paper>
           )}
         </Paper>
         <MessageForm
