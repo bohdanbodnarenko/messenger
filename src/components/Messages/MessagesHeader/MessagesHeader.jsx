@@ -17,6 +17,7 @@ const NameWrapper = styled.div`
 const Wrapper = styled.div`
   padding: 15px;
   border-left: 1px #000 solid;
+  border-bottom: 1px #000 solid;
   background: #003459;
   display: flex;
   justify-content: space-between;
@@ -30,7 +31,6 @@ const styles = {
 };
 export class MessagesHeader extends Component {
   render() {
-    console.log(this.props);
     const { classes } = this.props;
     return (
       <Wrapper>

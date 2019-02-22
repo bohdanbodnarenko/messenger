@@ -9,7 +9,8 @@ import {
   withStyles,
   Divider,
   Paper,
-  IconButton
+  IconButton,
+  LinearProgress
 } from "@material-ui/core";
 import * as Icons from "@material-ui/icons";
 
@@ -25,7 +26,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     width: "100%",
-    borderRightBottom:0,
+    borderRightBottom: 0
   },
   input: {
     marginLeft: 8,
@@ -38,6 +39,9 @@ const styles = {
     width: 1,
     height: 28,
     margin: 4
+  },
+  progress: {
+    height: "15px"
   }
 };
 export class MessageForm extends Component {
@@ -188,13 +192,20 @@ export class MessageForm extends Component {
     const { classes } = this.props;
     return (
       <Wrapper>
+        {this.state.uploadState === "uploading" ? (
+          <LinearProgress
+            color="secondary"
+            className={classes.progress}
+            variant="determinate"
+            value={this.state.percentUploaded}
+          />
+        ) : null}
         <Paper className={classes.root} elevation={1}>
           <IconButton onClick={this.openModal} className={classes.iconButton}>
             <Icons.InsertLinkRounded />
           </IconButton>
           <Divider className={classes.divider} />
           <InputBase
-            autoComplete={false}
             onKeyPress={this.handleKeyPress()}
             className={classes.input}
             placeholder="Write your message"
@@ -210,10 +221,6 @@ export class MessageForm extends Component {
             <Icons.SendRounded />
           </IconButton>
         </Paper>
-        <ProgressBar
-          uploadState={this.state.uploadState}
-          percentUploaded={this.state.percentUploaded}
-        />
         <FileModal
           uploadFile={this.uploadFile}
           open={this.state.isModalOpen}

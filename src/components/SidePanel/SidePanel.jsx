@@ -12,8 +12,14 @@ const Menu = styled.div`
   font-size: 1.2rem;
   display: grid;
   grid-template-columns: 100%;
-  grid-template-rows: 150px minmax(150px, auto);
+  grid-template-rows: 150px minmax(150px, 80%);
   grid-row-gap: 15px;
+`;
+
+const PannelsWrapper = styled.div`
+  background: red;
+  height: 100%;
+  width: 100%;
 `;
 
 export class SidePanel extends Component {
@@ -24,11 +30,11 @@ export class SidePanel extends Component {
     return (
       <Menu>
         <UserPanel user={this.props.user} />
-        <div>
+        <PannelsWrapper>
           <FavouriteChannels user={this.props.user} />
           <Channels user={this.props.user} />
           <DirectMessages user={this.props.user} />
-        </div>
+        </PannelsWrapper>
       </Menu>
     );
   }

@@ -1,14 +1,15 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
+import { Route } from "react-router-dom";
 
-import { Segment, CommentGroup, Label } from "semantic-ui-react";
 import MessagesHeader from "./MessagesHeader/MessagesHeader";
 import MessageForm from "./MessageForm/MessageForm";
 import firebase from "../../firebase";
 import Message from "./Message/Message";
 import { setUserPosts } from "../../store/actions";
-import { Paper, withStyles } from "@material-ui/core";
+import { Paper, withStyles, Menu, MenuItem } from "@material-ui/core";
 import styled from "styled-components";
+import Profile from "../Profile/Profile";
 
 const MessagesWrapper = styled.div`
   width: 100%;
@@ -28,7 +29,7 @@ const styles = {
     paddingBottom: "15px"
   }
 };
-export class Messages extends Component {
+class Messages extends Component {
   state = {
     messagesRef: firebase.database().ref("messages"),
     privateMessagesRef: firebase.database().ref("privateMessages"),
@@ -38,7 +39,8 @@ export class Messages extends Component {
     numUniqueUsers: "",
     searchResults: [],
     searchKey: "",
-    isChannelStarred: false
+    isChannelStarred: false,
+    anchorEl: null
   };
 
   componentWillReceiveProps(nextProps) {
@@ -179,10 +181,18 @@ export class Messages extends Component {
     return channel ? `${this.props.isPrivate ? "@" : "#"}${channel.name}` : "";
   };
 
+  handleDelete = (message) => (event) => {
+    console.log(message);
+  };
+
   displayMessages = messages => {
     if (messages.length > 0) {
+      console.log(messages[0])
       return messages.map(message => (
         <Message
+          handleDelete={this.handleDelete}
+          handleRightClick={this.handleRightClick}
+          anchorEl={this.state.anchorEl}
           key={message.timestamp}
           message={message}
           user={this.props.user}
@@ -195,6 +205,7 @@ export class Messages extends Component {
     const { classes } = this.props;
     return (
       <MessagesWrapper>
+        <Route path="/profile/:uid" component={Profile} />
         <MessagesHeader
           search={this.handleSearchChange}
           channelName={this.props.channel && this.props.channel.name}

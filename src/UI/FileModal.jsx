@@ -1,15 +1,26 @@
 import React, { Component } from "react";
-import {
-  Modal,
-  ModalHeader,
-  ModalContent,
-  Input,
-  ModalActions,
-  Button,
-  Icon
-} from "semantic-ui-react";
 import mime from "mime-types";
-import { Dialog, DialogTitle } from "@material-ui/core";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  InputBase,
+  DialogActions,
+  Button,
+  withStyles
+} from "@material-ui/core";
+import * as Icons from "@material-ui/icons";
+
+const styles = {
+  buttonSuccess: {
+    color: "#02C39A",
+    borderColor: "#02C39A"
+  },
+  buttonDanger: {
+    color: "#D90429",
+    borderColor: "#D90429"
+  }
+};
 
 class FileModal extends Component {
   state = {
@@ -26,38 +37,38 @@ class FileModal extends Component {
   sendFile = () => {
     const { file } = this.state;
     if (this.isValid(file.name)) {
-        this.props.close();
-        const metadata = {contentType:mime.lookup(file.name)}
-        this.props.uploadFile(file,metadata)
+      this.props.close();
+      const metadata = { contentType: mime.lookup(file.name) };
+      this.props.uploadFile(file, metadata);
     }
   };
 
   isValid = filename => this.state.allowedTypes.includes(mime.lookup(filename));
 
   render() {
+    const { classes } = this.props;
     return (
       <Dialog basic open={this.props.open} onClose={this.props.close}>
         <DialogTitle>Select an image File</DialogTitle>
-        <ModalContent>
-          <Input
+        <DialogContent>
+          <InputBase
             onChange={this.addFile()}
-            fluid
             label="File types: jpg, png"
             name="file"
             type="file"
           />
-        </ModalContent>
-        <ModalActions>
-          <Button color="green" onClick={this.sendFile} inverted>
-            <Icon name="checkmark" /> Send
+        </DialogContent>
+        <DialogActions>
+          <Button className={classes.buttonSuccess} onClick={this.sendFile}>
+            <Icons.CheckOutlined /> Send
           </Button>
-          <Button color="red" inverted onClick={this.props.close}>
-            <Icon name="remove" /> Close
+          <Button className={classes.buttonDanger} onClick={this.props.close}>
+            <Icons.CancelOutlined /> Close
           </Button>
-        </ModalActions>
+        </DialogActions>
       </Dialog>
     );
   }
 }
 
-export default FileModal;
+export default withStyles(styles)(FileModal);

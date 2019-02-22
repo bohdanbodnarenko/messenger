@@ -1,14 +1,18 @@
-import React, { Component } from 'react'
-import { Grid, Segment } from 'semantic-ui-react';
+import React, { Component } from "react";
+
+import styled from "styled-components";
+
+const Wrapper = styled.div`
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: red;
+`;
 
 export class Profile extends Component {
   render() {
-    return (
-      <Grid color='orange'>
-        <Segment color='red'></Segment>
-      </Grid>
-    )
+    return <Wrapper>Profile</Wrapper>;
   }
 }
 
-export default Profile
+export default Profile;

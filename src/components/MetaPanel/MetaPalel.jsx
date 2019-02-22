@@ -1,108 +1,61 @@
 import React, { Component } from "react";
-import {
-  Segment,
-  Header,
-  Accordion,
-  AccordionTitle,
-  Icon,
-  AccordionContent,
-  Image,
-  List,
-  ListItem,
-  ListContent,
-  ListHeader,
-  ListDescription
-} from "semantic-ui-react";
+
+import { withStyles, Tabs, AppBar, Tab } from "@material-ui/core";
+import * as Icons from "@material-ui/icons";
+import { ChannelInfo } from "./ChannelInfo";
+import Emoji from "./Emojis";
+
+const styles = theme => ({
+  indicator: {
+    backgroundColor: "#00A8E8"
+  },
+  root: {
+    backgroundColor: "#003459"
+  }
+});
 
 export class MetaPanel extends Component {
   state = {
-    activeIndex: 0
+    expanded: null,
+    tabValue: 0
   };
 
-  displayTopPosters = userPosts => {
-    return Object.entries(userPosts)
-      .sort((a, b) => b.count - a.count)
-      .map(([key, val], i) => (
-        <ListItem key={i}>
-          <Image avatar src={val.avatar} />
-          <ListContent>
-            <ListHeader as="a">{key}</ListHeader>
-            <ListDescription>{val.count} posts</ListDescription>
-          </ListContent>
-        </ListItem>
-      ));
+  handleTabChange = (event, value) => {
+    this.setState({ tabValue: { value }.value });
   };
 
-  setActiveIndex = (event, titleProps) => {
-    const { imdex } = titleProps;
-    const { activeIndex } = this.state;
-    const newIndex = activeIndex === imdex ? -1 : imdex;
-    this.setState({ activeIndex: newIndex });
+  componentWillReceiveProps = nextProps => {
+    if (nextProps.isPrivate) {
+      this.setState({ tabValue: 0 });
+    }
   };
 
   render() {
-    const { activeIndex } = this.state;
-
-    if (this.props.isPrivate) return null;
+    const { tabValue } = this.state;
+    const { classes } = this.props;
 
     return (
-      <Segment loading={!this.props.channel}>
-        <Header as="h3" attached="top">
-          About {this.props.channel && this.props.channel.name}
-        </Header>
-        <Accordion styled attached="true">
-          <AccordionTitle
-            imdex={0}
-            active={activeIndex === 0}
-            onClick={this.setActiveIndex}
+      <div style={{ background: "#003459", borderLeft: ".5px #00171F solid" }}>
+        <AppBar position="static">
+          <Tabs
+            classes={{ indicator: classes.indicator, root: classes.root }}
+            value={tabValue}
+            onChange={this.handleTabChange}
           >
-            <Icon name="dropdown" />
-            <Icon name="info circle" />
-            Channel Details
-          </AccordionTitle>
-          <AccordionContent active={activeIndex === 0}>
-            {this.props.channel && this.props.channel.details}
-          </AccordionContent>
-          <AccordionTitle
-            imdex={1}
-            active={activeIndex === 1}
-            onClick={this.setActiveIndex}
-          >
-            <Icon name="dropdown" />
-            <Icon name="user circle" />
-            Top Posters
-          </AccordionTitle>
-          <AccordionContent active={activeIndex === 1}>
-            <List>
-              {this.props.userPosts &&
-                this.displayTopPosters(this.props.userPosts)}
-            </List>
-          </AccordionContent>
-          <AccordionTitle
-            imdex={2}
-            active={activeIndex === 2}
-            onClick={this.setActiveIndex}
-          >
-            <Icon name="dropdown" />
-            <Icon name="pencil alternate" />
-            Created By
-          </AccordionTitle>
-          <AccordionContent active={activeIndex === 2}>
-            <Header as="h3">
-              <Image
-                avatar
-                src={this.props.channel && this.props.channel.createdBy.avatar}
-              />
-              <span>
-                {"  "}
-                {this.props.channel && this.props.channel.createdBy.name}
-              </span>
-            </Header>
-          </AccordionContent>
-        </Accordion>
-      </Segment>
+            <Tab label="Emoji" />
+            <Tab disabled={this.props.isPrivate} label="Channel Info" />
+          </Tabs>
+        </AppBar>
+        {tabValue === 0 && <Emoji />}
+        {tabValue === 1 && (
+          <ChannelInfo
+            userPosts={this.props.userPosts}
+            channel={this.props.channel}
+          />
+        )}
+      </div>
     );
   }
 }
 
-export default MetaPanel;
+export default withStyles(styles)(MetaPanel);

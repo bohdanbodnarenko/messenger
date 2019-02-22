@@ -2,12 +2,12 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 
 import * as Icons from "@material-ui/icons";
-import { Icon, Label } from "semantic-ui-react";
 
 import firebase from "../../../firebase";
 import { setCurrentChannel, setPrivateChannel } from "../../../store/actions";
 import SideMenu from "../SideMenuModel/SideMenu.model";
 import {
+  Paper,
   ListItem,
   Dialog,
   DialogTitle,
@@ -16,7 +16,6 @@ import {
   DialogActions,
   Button
 } from "@material-ui/core";
-import styled from "styled-components";
 
 export class Channels extends Component {
   state = {
@@ -198,9 +197,9 @@ export class Channels extends Component {
         >
           <Icons.ChatBubble />
           {this.getNotificationCount(channel) && (
-            <Label style={{ background: "#e6186d" }}>
+            <Paper style={{ background: "#e6186d" }}>
               {this.getNotificationCount(channel)}
-            </Label>
+            </Paper>
           )}
           {channel.name}
         </ListItem>
@@ -215,19 +214,6 @@ export class Channels extends Component {
     const { open } = this.state;
     return (
       <Fragment>
-        {/* <MenuMenu className="menu">
-          <MenuItem>
-            <span>
-              <Icon name="exchange" />
-              Channels
-            </span>
-            {"  "}({this.state.channels.length}){" "}
-            <Icon
-              onClick={this.openModal}
-              className="clickable-icon"
-              name="add"
-            />
-          </MenuItem> */}
         <SideMenu
           name="Chats"
           open={open}
@@ -246,14 +232,6 @@ export class Channels extends Component {
           <DialogTitle>Add a Channel</DialogTitle>
           <DialogContent>
             <form onSubmit={this.handleSubmit()}>
-              {/* <FormField>
-                <Input
-                  fluid
-                  placeholder="Name of Channel"
-                  name="channelName"
-                  onChange={this.handleChange()}
-                />
-              </FormField> */}
               <TextField
                 autoFocus
                 margin="dense"
@@ -283,8 +261,8 @@ export class Channels extends Component {
               </FormField> */}
               <DialogActions>
                 <Button
-                variant='outlined' 
-                  style={{ color: "#02C39A",borderColor:'#02C39A' }}
+                  variant="outlined"
+                  style={{ color: "#02C39A", borderColor: "#02C39A" }}
                   onClick={this.handleSubmit()}
                   type="submit"
                 >
