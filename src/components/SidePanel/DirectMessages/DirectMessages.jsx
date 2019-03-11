@@ -3,9 +3,14 @@ import { connect } from "react-redux";
 
 import firebase from "../../../firebase";
 import { setCurrentChannel, setPrivateChannel } from "../../../store/actions";
-import SideMenu from "../SideMenuModel/SideMenu.model";
 import * as Icons from "@material-ui/icons";
-import { ListItem } from "@material-ui/core";
+import { ListItem, List } from "@material-ui/core";
+import styled from "styled-components";
+
+const ListWrapper = styled.div`
+  max-height: 100%;
+  overflow-y: scroll;
+`;
 
 export class DirectMessages extends Component {
   state = {
@@ -95,36 +100,34 @@ export class DirectMessages extends Component {
     this.setState({ open: !this.state.open });
   };
   render() {
-    const { users, open } = this.state;
+    const { users } = this.state;
     return (
-      <SideMenu
-        icon={<Icons.People />}
-        toggleOpen={this.toggleOpen}
-        name="Users"
-        open={open}
-        length={this.state.users.length}
-      >
-        {users.map(user => (
-          <ListItem
-            key={user.uid}
-            onClick={() => this.changeChannel(user)}
-            className="link"
-            style={{
-              opacity: 0.7,
-              fontStyle: "italic",
-              width: "100%",
-              height: "15%",
-              marginBottom: "5px"
-            }}
-          >
-            <Icons.Label
-              style={{ color: this.isUserOnline(user) ? "#02C39A" : "#D90429" }}
-            />
-            {user.name}
-            {/* <Icons.BlurCircularRounded /> */}
-          </ListItem>
-        ))}
-      </SideMenu>
+      <ListWrapper>
+        <List>
+          {users.map(user => (
+            <ListItem
+              key={user.uid}
+              onClick={() => this.changeChannel(user)}
+              className="link"
+              style={{
+                opacity: 0.7,
+                fontStyle: "italic",
+                width: "100%",
+                height: "15%",
+                marginBottom: "5px"
+              }}
+            >
+              <Icons.Label
+                style={{
+                  color: this.isUserOnline(user) ? "#02C39A" : "#D90429"
+                }}
+              />
+              {user.name}
+              {/* <Icons.BlurCircularRounded /> */}
+            </ListItem>
+          ))}
+        </List>
+      </ListWrapper>
     );
   }
 }

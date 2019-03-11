@@ -4,9 +4,14 @@ import { connect } from "react-redux";
 import firebase from "../../../firebase";
 // import { MenuMenu, MenuItem, Icon } from "semantic-ui-react";
 import { setCurrentChannel, setPrivateChannel } from "../../../store/actions";
-import { ListItem } from "@material-ui/core";
+import { ListItem, List } from "@material-ui/core";
 import * as Icons from "@material-ui/icons";
-import SideMenu from "../SideMenuModel/SideMenu.model";
+import styled from "styled-components";
+
+const ListWrapper = styled.div`
+  max-height: 100%;
+  overflow-y: scroll;
+`;
 
 export class FavouriteChannels extends Component {
   state = {
@@ -76,22 +81,12 @@ export class FavouriteChannels extends Component {
     this.setState({ activeChannel: channel.id });
   };
 
-  toggleOpen = () => {
-    this.setState({ open: !this.state.open });
-  };
-
   render() {
-    const { favouriteChannels, open } = this.state;
+    const { favouriteChannels } = this.state;
     return (
-      <SideMenu
-        open={open}
-        icon={<Icons.StarOutlined />}
-        toggleOpen={this.toggleOpen}
-        length={favouriteChannels.length}
-        name="Favourite"
-      >
-        {this.displayChannels(favouriteChannels)}
-      </SideMenu>
+      <ListWrapper>
+        <List>{this.displayChannels(favouriteChannels)}</List>
+      </ListWrapper>
     );
   }
 }

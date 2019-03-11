@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import ColorPanel from "./ColorPanel/ColorPanel";
 import SidePanel from "./SidePanel/SidePanel";
 import Messages from "./Messages/Messages";
-import MetaPanel from "./MetaPanel/MetaPalel";
 import Spinner from "../UI/Spinner";
 import styled from "styled-components";
 import firebase from "../firebase";
@@ -13,10 +12,7 @@ import { setUser, clearUser } from "../store/actions";
 
 const Main = styled.main`
   display: grid;
-  grid-template-columns: 50px minmax(100px, 300px) minmax(250px, 1280px) minmax(
-      150px,
-      300px
-    );
+  grid-template-columns: 50px minmax(100px, 300px) minmax(250px, auto);
   grid-template-rows: 100vh;
   grid-gap: 0;
 `;
@@ -34,17 +30,20 @@ class App extends Component {
     if (this.props.user) {
       return (
         <Main columns="equal" className="app" style={{ background: "#eee" }}>
-          <ColorPanel />
-          <SidePanel user={this.props.user ? this.props.user : null} />
+          <ColorPanel user={this.props.user} />
+          <SidePanel
+            primary={this.props.primaryColor}
+            accent={this.props.accentColor}
+            user={this.props.user ? this.props.user : null}
+          />
           <Messages
+            primary={this.props.primaryColor}
+            secondary={this.props.secondaryColor}
+            accent={this.props.accentColor}
             key={this.props.user && this.props.user.uid}
             channel={this.props.currentChannel}
             user={this.props.user}
-            isPrivate={this.props.isPrivate}
-          />
-          <MetaPanel
             userPosts={this.props.userPosts}
-            channel={this.props.currentChannel}
             isPrivate={this.props.isPrivate}
           />
         </Main>
@@ -60,7 +59,10 @@ const mapStateToProps = state => {
     user: state.user.currentUser,
     currentChannel: state.channel.currentChannel,
     isPrivate: state.channel.isPrivate,
-    userPosts: state.channel.userPosts
+    userPosts: state.channel.userPosts,
+    primaryColor: state.color.primary,
+    secondaryColor: state.color.secondary,
+    accentColor: state.color.accent
   };
 };
 

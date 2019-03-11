@@ -10,6 +10,7 @@ import styled from "styled-components";
 
 import firebase from "../../../firebase";
 import { IconButton, Avatar } from "@material-ui/core";
+import ChangeAvatarModal from "../../../UI/ChangeAvatarModal";
 
 const SideWrapper = styled.div`
   display: grid;
@@ -29,11 +30,13 @@ const Header = styled.div`
 const AvatarWrapper = styled.div`
   display: flex;
   justify-content: center;
-  color: #F0F3BD;
+  color: #f0f3bd;
 `;
 export class UserPanel extends Component {
   state = {
-    anchorEl: null
+    anchorEl: null,
+    modal: false,
+    previewImage: ""
   };
   handleSignOut = () => {
     firebase
@@ -49,11 +52,21 @@ export class UserPanel extends Component {
     this.setState({ anchorEl: event.currentTarget });
   };
 
+  openModal = () => {
+    this.setState({ modal: true });
+  };
+
+  closeModal = () => {
+    this.setState({ modal: false });
+  };
+
   handleClose = option => {
-    console.log(option);
     switch (option) {
-      case "Open Profile":
+      case this.props.user.displayName:
         this.props.history.push(`/profile/${this.props.user.uid}`);
+        break;
+      case "Change Avatar":
+        this.openModal();
         break;
       case "Log out":
         this.handleSignOut();
@@ -66,7 +79,7 @@ export class UserPanel extends Component {
   };
 
   render() {
-    const options = [this.props.user.displayName, "Open Profile", "Log out"];
+    const options = [this.props.user.displayName, "Change Avatar", "Log out"];
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
     return (
@@ -77,11 +90,11 @@ export class UserPanel extends Component {
               style={{
                 width: 40,
                 height: 40,
-                color: "#00A8E8",
+                color: this.props.color,
                 marginRight: "10px"
               }}
             />
-            <h1 style={{ color: "#00A8E8" }}>Social Network</h1>
+            <h1 style={{ color: this.props.color }}>Social Network</h1>
           </Header>
         </Link>
         <AvatarWrapper>
@@ -126,6 +139,11 @@ export class UserPanel extends Component {
             ))}
           </Menu>
         </AvatarWrapper>
+        <ChangeAvatarModal
+          onFileChange={this.handleFileChange}
+          open={this.state.modal}
+          close={this.closeModal}
+        />
       </SideWrapper>
     );
   }

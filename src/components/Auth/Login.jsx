@@ -33,7 +33,7 @@ const AuthWrapper = styled.div`
   justify-content: space-between;
   height: 50vh;
   color: #342e37;
-  background: #fff;
+  background: #FFF;
   text-align: center;
   @media (max-width: 700px) {
     width: 90vw;

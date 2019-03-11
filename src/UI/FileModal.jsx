@@ -6,10 +6,9 @@ import {
   DialogContent,
   InputBase,
   DialogActions,
-  Button,
   withStyles
 } from "@material-ui/core";
-import * as Icons from "@material-ui/icons";
+import CustomButton from "./CustomButton";
 
 const styles = {
   buttonSuccess: {
@@ -46,7 +45,6 @@ class FileModal extends Component {
   isValid = filename => this.state.allowedTypes.includes(mime.lookup(filename));
 
   render() {
-    const { classes } = this.props;
     return (
       <Dialog basic open={this.props.open} onClose={this.props.close}>
         <DialogTitle>Select an image File</DialogTitle>
@@ -59,12 +57,8 @@ class FileModal extends Component {
           />
         </DialogContent>
         <DialogActions>
-          <Button className={classes.buttonSuccess} onClick={this.sendFile}>
-            <Icons.CheckOutlined /> Send
-          </Button>
-          <Button className={classes.buttonDanger} onClick={this.props.close}>
-            <Icons.CancelOutlined /> Close
-          </Button>
+          <CustomButton click={this.sendFile} success>Send</CustomButton>
+          <CustomButton click={this.props.close} cancel>Cancel</CustomButton>
         </DialogActions>
       </Dialog>
     );

@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import firebase from "../../../firebase";
 import FileModal from "../../../UI/FileModal";
 import uuidv4 from "uuid/v4";
-import ProgressBar from "../../../UI/ProgressBar";
 import styled from "styled-components";
 import {
   InputBase,
@@ -13,6 +12,8 @@ import {
   LinearProgress
 } from "@material-ui/core";
 import * as Icons from "@material-ui/icons";
+import { Picker, emojiIndex } from "emoji-mart";
+import "emoji-mart/css/emoji-mart.css";
 
 const Wrapper = styled.div`
   display: flex;
@@ -33,7 +34,7 @@ const styles = {
     flex: 1
   },
   iconButton: {
-    padding: 10
+    padding: 4
   },
   divider: {
     width: 1,
@@ -53,7 +54,9 @@ export class MessageForm extends Component {
     message: "",
     loading: false,
     error: "",
-    isModalOpen: false
+    isModalOpen: false,
+    typingRef: firebase.database().ref("typing"),
+    isEmojiPickerOpen: false
   };
 
   getPath = () => {
@@ -62,6 +65,10 @@ export class MessageForm extends Component {
     } else {
       return "chat/public";
     }
+  };
+
+  toggleEmojiPicker = () => {
+    this.setState({ isEmojiPickerOpen: !this.state.isEmojiPickerOpen });
   };
 
   uploadFile = (file, metadata) => {
@@ -81,7 +88,6 @@ export class MessageForm extends Component {
             const percentUploaded = Math.round(
               (snap.bytesTransferred / snap.totalBytes) * 100
             );
-            console.log(percentUploaded);
             this.setState({ percentUploaded });
           },
           err => {
@@ -158,14 +164,19 @@ export class MessageForm extends Component {
   };
 
   sendMessage = () => {
-    const { messagesRef } = this.props;
+    const { messagesRef, channel, user } = this.props;
+    const { typingRef } = this.state;
     if (this.state.message) {
       messagesRef
-        .child(this.props.channel.id)
+        .child(channel.id)
         .push()
         .set(this.createMessage())
         .then(() => {
           this.setState({ loading: false, message: "", error: "" });
+          typingRef
+            .child(channel.id)
+            .child(user.uid)
+            .remove();
         })
         .catch(err => {
           console.error(err);
@@ -181,14 +192,30 @@ export class MessageForm extends Component {
     }
   };
 
-  handleKeyPress = () => event => {
+  handleKeyPress = event => {
     if (event.key === "Enter") {
       this.sendMessage();
     }
   };
 
+  handleKeyDown = () => {
+    const { message, typingRef } = this.state;
+    const { channel, user } = this.props;
+    if (message.trim()) {
+      typingRef
+        .child(channel.id)
+        .child(user.uid)
+        .set(user.displayName);
+    } else {
+      typingRef
+        .child(channel.id)
+        .child(user.uid)
+        .remove();
+    }
+  };
+
   render() {
-    const { message } = this.state;
+    const { message, isEmojiPickerOpen } = this.state;
     const { classes } = this.props;
     return (
       <Wrapper>
@@ -206,7 +233,8 @@ export class MessageForm extends Component {
           </IconButton>
           <Divider className={classes.divider} />
           <InputBase
-            onKeyPress={this.handleKeyPress()}
+            onKeyPress={this.handleKeyPress}
+            onKeyDown={this.handleKeyDown}
             className={classes.input}
             placeholder="Write your message"
             onChange={this.handleChange()}
@@ -214,7 +242,10 @@ export class MessageForm extends Component {
             value={message}
           />
           <Divider className={classes.divider} />
-          <IconButton className={classes.iconButton}>
+          <IconButton
+            onClick={this.toggleEmojiPicker}
+            className={classes.iconButton}
+          >
             <Icons.TagFacesRounded />
           </IconButton>
           <IconButton onClick={this.sendMessage} className={classes.iconButton}>

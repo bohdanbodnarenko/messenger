@@ -1,15 +1,15 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-import { Route } from "react-router-dom";
 
 import MessagesHeader from "./MessagesHeader/MessagesHeader";
 import MessageForm from "./MessageForm/MessageForm";
 import firebase from "../../firebase";
 import Message from "./Message/Message";
 import { setUserPosts } from "../../store/actions";
-import { Paper, withStyles, Menu, MenuItem } from "@material-ui/core";
+import { Paper, Typography } from "@material-ui/core";
 import styled from "styled-components";
-import Profile from "../Profile/Profile";
+import Typing from "./Typing/Typing";
+import MessageSkeleton from "./MessageSkeleton/MessageSkeleton";
 
 const MessagesWrapper = styled.div`
   width: 100%;
@@ -19,36 +19,64 @@ const MessagesWrapper = styled.div`
   grid-template-rows: 10% 85% 5%;
 `;
 
-const styles = {
-  root: {
-    borderRadius: 0,
-    boxShadow: "none",
-    maxHeight: "100%",
-    background: "#00171F",
-    overflowY: "scroll",
-    paddingBottom: "15px"
-  }
-};
+const MessagesContainer = styled.div`
+  border-radius: 0;
+  box-shadow: none;
+  max-height: 100%;
+  background: ${props => props.background};
+  overflow-y: scroll;
+  padding-bottom: 15px;
+`;
+
+const SelectChannelWrapper = styled.div`
+  background: ${props => props.background};
+  color: ${props => props.color};
+  border-radius: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const DotsWrapper = styled.div`
+  margin-left: "9px";
+  display: flex;
+  align-items: center;
+  color: ${props => props.color};
+  margin-bottom: 0.5em;
+`;
 class Messages extends Component {
   state = {
     messagesRef: firebase.database().ref("messages"),
     privateMessagesRef: firebase.database().ref("privateMessages"),
     usersRef: firebase.database().ref("users"),
+    typingRef: firebase.database().ref("typing"),
     messages: [],
     messagesLoading: true,
     numUniqueUsers: "",
     searchResults: [],
     searchKey: "",
     isChannelStarred: false,
-    anchorEl: null
+    anchorEl: null,
+    typingUsers: [],
+    connectedRef: firebase.database().ref(".info/connected")
   };
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.channel && nextProps.user) {
+    if (
+      nextProps.channel &&
+      nextProps.user &&
+      nextProps.channel !== this.props.channel
+    ) {
       this.addListeners(nextProps.channel.id);
       this.addUserStarsListener(nextProps.channel.id, nextProps.user.uid);
     }
   }
+
+  componentDidUpdate = (prevProps, prevState) => {
+    if (this.messagesEnd) {
+      this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   addUserStarsListener = (channelId, uid) => {
     this.state.usersRef
@@ -105,6 +133,41 @@ class Messages extends Component {
 
   addListeners = channelId => {
     this.addMessageListener(channelId);
+    this.addTypingListener(channelId);
+  };
+
+  addTypingListener = channelId => {
+    let typingUsers = [];
+    this.state.typingRef.child(channelId).on("child_added", snap => {
+      if (snap.key !== this.props.user.uid) {
+        typingUsers = typingUsers.concat({
+          id: snap.key,
+          name: snap.val()
+        });
+        this.setState({ typingUsers });
+      }
+    });
+    this.state.typingRef.child(channelId).on("child_removed", snap => {
+      const index = typingUsers.findIndex(user => user.id === snap.key);
+      if (index !== -1) {
+        typingUsers = typingUsers.filter(user => user.id !== snap.key);
+        this.setState({ typingUsers });
+      }
+    });
+
+    this.state.connectedRef.on("value", snap => {
+      if (snap.val() === true) {
+        this.state.typingRef
+          .child(channelId)
+          .child(this.props.user.uid)
+          .onDisconnect()
+          .remove(err => {
+            if (err) {
+              console.error(err);
+            }
+          });
+      }
+    });
   };
 
   addMessageListener = channelId => {
@@ -181,13 +244,12 @@ class Messages extends Component {
     return channel ? `${this.props.isPrivate ? "@" : "#"}${channel.name}` : "";
   };
 
-  handleDelete = (message) => (event) => {
+  handleDelete = message => event => {
     console.log(message);
   };
 
   displayMessages = messages => {
     if (messages.length > 0) {
-      console.log(messages[0])
       return messages.map(message => (
         <Message
           handleDelete={this.handleDelete}
@@ -196,45 +258,84 @@ class Messages extends Component {
           key={message.timestamp}
           message={message}
           user={this.props.user}
+          primary={this.props.primary}
+          accent={this.props.accent}
         />
       ));
     }
   };
 
-  render() {
-    const { classes } = this.props;
+  displayTypingUsers = users => {
     return (
-      <MessagesWrapper>
-        <Route path="/profile/:uid" component={Profile} />
-        <MessagesHeader
-          search={this.handleSearchChange}
-          channelName={this.props.channel && this.props.channel.name}
-          numUniqueUsers={this.state.numUniqueUsers}
-          isPrivate={this.props.isPrivate}
-          handleStar={this.handleStar}
-          isChannelStarred={this.state.isChannelStarred}
-        />
-        <Paper className={classes.root}>
-          {this.state.messages.length > 0 ? (
-            this.state.searchKey ? (
-              this.displayMessages(this.state.searchResults)
-            ) : (
-              this.displayMessages(this.state.messages)
-            )
-          ) : (
-            <Paper style={{ color: "#fff", background: "#e6186d" }}>
-              No messages yet!
-            </Paper>
-          )}
-        </Paper>
-        <MessageForm
-          channel={this.props.channel}
-          user={this.props.user}
-          messagesRef={this.getMessagesRef()}
-          isPrivate={this.props.isPrivate}
-        />
-      </MessagesWrapper>
+      users.length > 0 &&
+      users.map(user => (
+        <DotsWrapper key={user.id} color={this.props.accent}>
+          <span className="user-typing">{user.name} is typing </span>
+          <Typing />
+        </DotsWrapper>
+      ))
     );
+  };
+
+  displayMessageSkeleton = loading =>
+    loading ? (
+      <Fragment>
+        {[...Array(10)].map((_, i) => (
+          <MessageSkeleton key={i} />
+        ))}
+      </Fragment>
+    ) : null;
+
+  render() {
+    if (this.props.channel) {
+      return (
+        <MessagesWrapper>
+          <MessagesHeader
+            color={this.props.primary}
+            search={this.handleSearchChange}
+            channel={this.props.channel}
+            userPosts={this.props.userPosts}
+            numUniqueUsers={this.state.numUniqueUsers}
+            isPrivate={this.props.isPrivate}
+            handleStar={this.handleStar}
+            isChannelStarred={this.state.isChannelStarred}
+          />
+          <MessagesContainer background={this.props.secondary}>
+            <div>
+              {this.displayMessageSkeleton(this.state.messagesLoading)}
+              {this.state.messages.length > 0 ? (
+                this.state.searchKey ? (
+                  this.displayMessages(this.state.searchResults)
+                ) : (
+                  this.displayMessages(this.state.messages)
+                )
+              ) : (
+                <Paper style={{ color: "#fff", background: this.props.accent }}>
+                  No messages yet!
+                </Paper>
+              )}
+              {this.displayTypingUsers(this.state.typingUsers)}
+              <div ref={node => (this.messagesEnd = node)} />
+            </div>
+          </MessagesContainer>
+          <MessageForm
+            channel={this.props.channel}
+            user={this.props.user}
+            messagesRef={this.getMessagesRef()}
+            isPrivate={this.props.isPrivate}
+          />
+        </MessagesWrapper>
+      );
+    } else {
+      return (
+        <SelectChannelWrapper
+          background={this.props.secondary}
+          color={this.props.accent}
+        >
+          <h2>Please select channel</h2>
+        </SelectChannelWrapper>
+      );
+    }
   }
 }
 
@@ -252,4 +353,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(Messages));
+)(Messages);

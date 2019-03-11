@@ -19,11 +19,11 @@ body,
 .app {
   height: 100vh;
   color: #000;
-  background: #bbccd3;
+  background: #003459;
   padding: 1em;
   /* font-family: 'Source Sans Pro', sans-serif; */
-  font-family: 'Roboto', sans-serif;
-  font-size: .9em;
+  font-family: "Roboto", sans-serif;
+  font-size: 0.9em;
   padding: 0;
   margin: 0;
 }
@@ -38,7 +38,7 @@ h1 {
 }
 
 .primaryLink {
-  color: #0FACF3
+  color: #0facf3;
 }
 
 .itemsGroupWrapper {
@@ -55,7 +55,7 @@ Avatar {
 }
 
 .primaryLink:hover {
-  color: #fff
+  color: #fff;
 }
 
 .link {
@@ -65,13 +65,7 @@ Avatar {
 }
 
 .link:hover {
-  color: #00A8E8
-}
-
-
-.clickable-icon {
-  cursor: pointer;
-
+  color: #00a8e8;
 }
 
 .pointer {
@@ -79,9 +73,112 @@ Avatar {
 }
 
 svg {
-  transition: .15s ease-in
+  transition: 0.15s ease-in;
 }
 
 .progress__bar {
-  margin: .3em 0 0 0 !important;
+  margin: 0.3em 0 0 0 !important;
+}
+
+.dot {
+  float: left;
+  width: 8px;
+  height: 8px;
+  margin: 0 4px;
+  background: #8d8c91;
+  border-radius: 50%;
+  opacity: 0;
+  animation: loadingFade 1s infinite;
+}
+
+.dot:nth-child(1) {
+  animation-delay: 0s;
+}
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.dot:nth-child(1) {
+  animation-delay: 0.4 s;
+}
+
+@keyframes loadingFade {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.user-typing {
+  font-weight: 500;
+  margin-right: 5px;
+}
+
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  height: 40px;
+  margin-bottom: 10px;
+}
+
+.skeleton::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  animation: sweep 2s infinite;
+  background-image: linear-gradient(
+    to left,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(150%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.skeleton-avatar {
+  height: 35px;
+  width: 35px;
+  border-radius: 3px;
+  background-color: rgba(58, 57, 57, 0.3);
+}
+
+.skeleton-author {
+  background-color: rgba(58, 57, 57, 0.3);
+  width: 120px;
+  height: 10px;
+  border-radius: 3px;
+  position: absolute;
+  bottom: 30px;
+  left: 40px;
+  right: 0;
+}
+
+.skeleton-details {
+  background-color: rgba(58, 57, 57, 0.3);
+  height: 20px;
+  border-radius: 3px;
+  position: absolute;
+  bottom: 5px;
+  left: 40px;
+  right: 20px;
 }

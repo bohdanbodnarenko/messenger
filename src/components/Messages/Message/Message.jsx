@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from "react";
 import moment from "moment";
-import { Paper, withStyles, Avatar, MenuItem, Menu } from "@material-ui/core";
+import { Avatar, MenuItem, Menu } from "@material-ui/core";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -21,7 +21,7 @@ const MessageWrapper = styled.div`
   border-bottom-left-radius: ${props => (props.own ? "15px" : 0)};
   margin-right: ${props => (props.own ? "7px" : 0)};
   margin-left: ${props => (props.own ? 0 : "7px")};
-  background: ${props => (props.own ? "#003459" : "#24a1db")};
+  background: ${props => props.background};
   padding: ${props => (props.img ? "0" : "7px")};
   color: #fff;
   position: relative;
@@ -100,9 +100,16 @@ class Message extends Component {
           onClose={this.handleClose}
         >
           <MenuItem onClick={this.handleCopy}>Copy Text</MenuItem>
-          <MenuItem onClick={this.props.handleDelete(this.props.message)}>Delete Message</MenuItem>
+          <MenuItem onClick={this.props.handleDelete(this.props.message)}>
+            Delete Message
+          </MenuItem>
         </Menu>
         <MessageWrapper
+          background={
+            this.isOwnMessage(this.props.message, this.props.user)
+              ? this.props.primary
+              : this.props.accent
+          }
           onContextMenu={this.handleRightClick}
           img={this.isImage(this.props.message)}
           own={this.isOwnMessage(this.props.message, this.props.user)}

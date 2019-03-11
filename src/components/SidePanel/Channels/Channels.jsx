@@ -5,7 +5,6 @@ import * as Icons from "@material-ui/icons";
 
 import firebase from "../../../firebase";
 import { setCurrentChannel, setPrivateChannel } from "../../../store/actions";
-import SideMenu from "../SideMenuModel/SideMenu.model";
 import {
   Paper,
   ListItem,
@@ -14,8 +13,15 @@ import {
   DialogContent,
   TextField,
   DialogActions,
-  Button
+  List
 } from "@material-ui/core";
+import CustomButton from "../../../UI/CustomButton";
+import styled from "styled-components";
+
+const ListWrapper = styled.div`
+  max-height: 100%;
+  overflow-y: scroll;
+`;
 
 export class Channels extends Component {
   state = {
@@ -51,6 +57,10 @@ export class Channels extends Component {
     }
   };
 
+  shouldComponentUpdate = (nextProps, nextState) => {
+    return nextState.channels === this.state.channels;
+  };
+
   componentDidMount = () => {
     this.addListeners();
   };
@@ -67,7 +77,7 @@ export class Channels extends Component {
     let loadedChannels = [];
     this.state.channelsRef.on("child_added", snap => {
       loadedChannels.push(snap.val());
-      this.setState({ channels: loadedChannels }, () => this.setFirstChannel());
+      this.setState({ channels: loadedChannels });
       this.addNotificationListener(snap.key);
     });
   };
@@ -109,15 +119,6 @@ export class Channels extends Component {
     }
 
     this.setState({ notifications });
-  };
-
-  setFirstChannel = () => {
-    const firstChannel = this.state.channels[0];
-    if (this.state.firstLoad && this.state.channels.length > 0) {
-      this.props.setCurrentChannel(firstChannel);
-      this.setActiveChannel(firstChannel);
-    }
-    this.setState({ firstLoad: false });
   };
 
   clearNotifications = () => {
@@ -211,22 +212,16 @@ export class Channels extends Component {
     channelName && channelDetails;
 
   render() {
-    const { open } = this.state;
     return (
       <Fragment>
-        <SideMenu
-          name="Chats"
-          open={open}
-          length={this.state.channels.length}
-          toggleOpen={this.toggleOpen}
-          icon={<Icons.Chat />}
-        >
-          <ListItem className="link" onClick={this.openModal}>
-            Add Chat <Icons.AddCircle />
-          </ListItem>
-          {this.displayChannels()}
-        </SideMenu>
-        {/* </MenuMenu> */}
+        <ListWrapper>
+          <List>
+            <ListItem className="link" onClick={this.openModal}>
+              Add Chat <Icons.AddCircle />
+            </ListItem>
+            {this.displayChannels()}
+          </List>
+        </ListWrapper>
 
         <Dialog basic open={this.state.isModalOpen} onClose={this.closeModal}>
           <DialogTitle>Add a Channel</DialogTitle>
@@ -251,23 +246,10 @@ export class Channels extends Component {
                 fullWidth
                 onChange={this.handleChange()}
               />
-              {/* <FormField>
-                <Input
-                  fluid
-                  placeholder="About the Channel"
-                  name="channelDetails"
-                  onChange={this.handleChange()}
-                />
-              </FormField> */}
               <DialogActions>
-                <Button
-                  variant="outlined"
-                  style={{ color: "#02C39A", borderColor: "#02C39A" }}
-                  onClick={this.handleSubmit()}
-                  type="submit"
-                >
-                  <Icons.Check /> Add
-                </Button>
+                <CustomButton success click={this.handleSubmit()} type="submit">
+                  Add
+                </CustomButton>
               </DialogActions>
             </form>
           </DialogContent>
